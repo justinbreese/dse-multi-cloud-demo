@@ -14,10 +14,11 @@ Yes, it is possible. And yes, you can do it!
 ## Set these environmental variables to whatever the values are for you:
 ```
 export cassandra_default_password="blah"
-export dsrepo_user="blah"
-export dsrepo_pass="blah"
-export dsrepo_key="blah"
+export academy_user="blah"
+export academy_pass="blah"
+export academy_token="blah"
 ```
+Make sure that you don't ever use the default password.  If you don't have credentials for DataStax Academy, then go and sign up for it at http://acamdemy.datastax.com.  Be sure to create a download key (token) for your downloads.
 
 ## Make sure that Python is installed on all of the VMs
 If it isn't installed, then it won't work
