@@ -5,7 +5,6 @@
 # command line parameter with node IP/DC in the following format:
 # public_IP:private_IP:DC_name:node_number
 
-
 import os
 import sys
 import requests
