@@ -36,9 +36,9 @@ cluster_name = args["cluster_name"]
 server_list = args["server_list"]
 username = args["user"]
 
-repo_user = os.environ.get('dsrepo_user').strip()
-repo_pass = os.environ.get('dsrepo_pass').strip()
-download_token = os.environ.get('dsrepo_key').strip()
+repo_user = os.environ.get('academy_user').strip()
+repo_pass = os.environ.get('academy_pass').strip()
+download_token = os.environ.get('academy_key').strip()
 
 bashCommand = 'ssh -i '+ ssh_key+ ' '+ username+'@'+server_ip+' \'sudo apt install -y software-properties-common; \
 sudo apt-add-repository -y ppa:webupd8team/java; \
