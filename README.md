@@ -18,10 +18,10 @@ export dsrepo_key="blah"
 ```
 
 ## Make sure that Python is installed on all of the VMs
-* If it isn't installed, then it won't work
+If it isn't installed, then it won't work
 
 ## Create a text file that has your different VMs that you want in the cluster:
-* Format is: public-ip:private-ip:dc-name:node-number for example, I call it as multi-list.txt below:
+Format is: public-ip:private-ip:dc-name:node-number for example, I call it as multi-list.txt below:
 ```
 128.230.34.32:10.5.4.3:azure:0
 128.230.54.32:10.5.4.8:azure:1
