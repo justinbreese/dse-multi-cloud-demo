@@ -37,3 +37,9 @@ Let's break down the switches:
 * -n --> name of the dse cluster that you'd like to create
 * -s --> list of servers that you created in the previous step
 * -v --> version of DSE that you want to deploy
+
+The script could take a few minutes to deploy so be patient.
+
+## Up next:
+* Turn on SSL
+* Deploy some cool stuff and make that cluster work for you (e.g. load testing, cool demos)
