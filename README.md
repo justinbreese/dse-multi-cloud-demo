@@ -1,5 +1,7 @@
 # dse-multi-cloud-demo
-I'll add some stuff here shortly...
+Do you want a single cluster that can span multiple public clouds all while securing your data in the process? Also, I hope you mind if you don't have any downtime... with DataStax we make it really easy to be on-prem, in the cloud, hybrid, or even multi-cloud.  
+
+Yes, it is possible. And yes, you can do it!
 
 ## Create your VMs
 * Go to a few of your favorite public cloud providers and create some VMs!
