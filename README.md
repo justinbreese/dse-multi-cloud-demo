@@ -43,10 +43,10 @@ Let's break down the switches:
 
 The script could take a few minutes to deploy so be patient.
 
-## Up next:
+# Up next:
 * Turn on SSL
 * Deploy some cool stuff and make that cluster work for you (e.g. load testing, cool demos)
 
-### Credit to:
+# Credit to:
 * Wei Deng 
 * Richard Lewis (Lewisr650)
