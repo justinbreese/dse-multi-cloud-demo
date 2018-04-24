@@ -81,7 +81,7 @@ with open(ssh_key, 'r') as myfile:
         privateKey=myfile.read()
 machine_credential_response = do_post("machine_credentials/",
      {"name": "playground-multi-cloud",
-      "login-user": "datastax",
+      "login-user": username,
       "become-mode": "sudo",
       "ssh-private-key": privateKey
     }
