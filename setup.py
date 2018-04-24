@@ -13,7 +13,7 @@ import threading
 import argparse
 import subprocess
 
-# Configurable Global variables
+# Configurable args
 ap = argparse.ArgumentParser()
 ap.add_argument("-lcm", "--LCM_server_ip", required=True,
 	help="public IP address of the LCM server")
