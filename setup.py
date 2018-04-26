@@ -41,6 +41,7 @@ repo_user = os.environ.get('academy_user').strip()
 repo_pass = os.environ.get('academy_pass').strip()
 download_token = os.environ.get('academy_token').strip()
 
+#SSH into the OpsCetner/LCM server, install the JDK, install OpsCenter, and then wait 45 seconds for everything to start up
 bashCommand = 'ssh -i '+ ssh_key+ ' '+ username+'@'+server_ip+' \'sudo apt install -y software-properties-common; \
 sudo apt-add-repository -y ppa:webupd8team/java; \
 sudo apt update; \
@@ -55,9 +56,7 @@ sleep 45;\''
 output = subprocess.check_output(['bash','-c', bashCommand])
 
 base_url = 'http://%s:8888/api/v2/lcm/' % server_ip
-
 cassandra_default_password = os.environ.get('cassandra_default_password').strip()
-
 opscenter_session = os.environ.get('opscenter_session', '')
 
 print str(sys.argv)
@@ -152,5 +151,5 @@ install_job = do_post("actions/install",
                       "continue-on-error":"false"})
 
 print("http://%s:8888" % server_ip)
-
+#open up a new browser tab that shows LCM working
 webbrowser.open_new_tab('http://'+server_ip+':8888/opscenter/lcm.html')
