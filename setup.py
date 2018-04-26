@@ -12,6 +12,7 @@ import json
 import threading
 import argparse
 import subprocess
+import webbrowser
 
 # Configurable args
 ap = argparse.ArgumentParser()
@@ -49,7 +50,7 @@ echo "deb https://'+repo_user+':'+download_token+'@debian.datastax.com/enterpris
 stable main" | sudo tee -a /etc/apt/sources.list.d/datastax.sources.list; \
 curl -L https://debian.datastax.com/debian/repo_key | sudo apt-key add - ; \
 sudo apt-get update; sudo apt-get install opscenter; sudo service opscenterd start;\
-sleep 30;\''
+sleep 45;\''
 
 output = subprocess.check_output(['bash','-c', bashCommand])
 
@@ -83,7 +84,8 @@ machine_credential_response = do_post("machine_credentials/",
      {"name": "playground-multi-cloud",
       "login-user": username,
       "become-mode": "sudo",
-      "ssh-private-key": privateKey
+      "ssh-private-key": privateKey,
+	  "use-ssh-keys": True
     }
 )
 machine_credential_id = machine_credential_response['id']
@@ -150,3 +152,5 @@ install_job = do_post("actions/install",
                       "continue-on-error":"false"})
 
 print("http://%s:8888" % server_ip)
+
+webbrowser.open_new_tab('http://'+server_ip+':8888/opscenter/lcm.html')
