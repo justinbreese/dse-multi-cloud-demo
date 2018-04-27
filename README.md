@@ -53,5 +53,5 @@ The script could take a few minutes to deploy so be patient.
 * Deploy some cool stuff and make that cluster work for you (e.g. load testing, cool demos)
 
 # Credit to:
-* Wei Deng 
+* Wei Deng (weideng1)
 * Richard Lewis (Lewisr650)
