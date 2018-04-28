@@ -1,5 +1,5 @@
 # dse-multi-cloud-demo
-Do you want a single cluster that can span multiple public clouds all while securing your data in the process? Also, I hope you mind if you don't have any downtime... with DataStax we make it really easy to be on-prem, in the cloud, hybrid, or even multi-cloud. 
+Do you want a single cluster that can span multiple public clouds all while securing your data in the process? Also, I hope you mind if you don't have any downtime... with DataStax we make it really easy to be on-prem, in the cloud, hybrid, or even multi-cloud.
 
 Multi-cloud is starting to be very important for customers. By leveraging multiple public clouds, they're able to maintain data portability as well as being able to shop around to find the best infrastructure price for their given workloads. DataStax Enterprise provides that level of portability that they would not have by just using one public cloud.
 
@@ -37,11 +37,11 @@ Format is: public-ip:private-ip:dc-name:node-number for example, I call it as mu
 ```
 
 ## From your laptop, run the following command:
-`lcm-setup.py -lcm 13.93.183.48 -u datastax -k keys/rightscale -n dse-cluster -s Documents/temp/multi-list.txt -v 6.0.0`
+`python dse-multi-cloud-demo/setup.py -lcm 52.160.36.16 -u ubuntu -k keys/ubuntu -n dse-cluster -s dse-multi-cloud-demo/server-list -v 6.0.0`
 
 Let's break down the switches:
 * -u --> username that you'll use to log into all of the servers
-* -k --> location of the private key on your laptop 
+* -k --> location of the private key on your laptop
 * -n --> name of the dse cluster that you'd like to create
 * -s --> list of servers that you created in the previous step
 * -v --> version of DSE that you want to deploy
