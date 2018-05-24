@@ -20,7 +20,7 @@ export academy_user="blah"
 export academy_pass="blah"
 export academy_token="blah"
 ```
-Make sure that you don't ever use the default password.  If you don't have credentials for DataStax Academy, then go and sign up for it at http://acamdemy.datastax.com.  Be sure to create a download key (token) for your downloads.
+Make sure that you don't ever use the default password.  If you don't have credentials for DataStax Academy, then go and sign up for it at http://academy.datastax.com.  Be sure to create a download key (token) for your downloads.
 
 ## Make sure that Python is installed on all of the VMs
 If it isn't installed, then it won't work
@@ -28,12 +28,15 @@ If it isn't installed, then it won't work
 ## Create a text file that has your different VMs that you want in the cluster:
 Format is: public-ip:private-ip:dc-name:node-number for example, I call it as multi-list.txt below:
 ```
-128.230.34.32:10.5.4.3:azure:0
-128.230.54.32:10.5.4.8:azure:1
-128.230.51.32:10.5.3.3:aws:0
-128.230.76.32:10.5.3.6:aws:1
-128.230.09.32:10.5.4.3:gce:0
-128.230.11.32:10.5.4.4:gce:1
+18.236.78.240:172.31.16.53:aws:0
+34.217.211.58:172.31.21.235:aws:1
+34.208.176.38:172.31.17.235:aws:2
+35.224.38.177:10.128.0.2:gcp:0
+35.193.235.66:10.128.0.3:gcp:1
+35.192.167.240:10.128.0.4:gcp:2
+104.42.173.94:172.16.0.4:azure:0
+104.42.168.14:172.16.0.4:azure:1
+104.42.173.219:172.16.0.4:azure:2
 ```
 
 ## From your laptop, run the following command:
