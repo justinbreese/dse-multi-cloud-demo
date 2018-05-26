@@ -20,7 +20,7 @@ export academy_user="blah"
 export academy_pass="blah"
 export academy_token="blah"
 ```
-Make sure that you don't ever use the default password.  If you don't have credentials for DataStax Academy, then go and sign up for it at http://academy.datastax.com.  Be sure to create a download key (token) for your downloads.
+If you don't have credentials for DataStax Academy, then go and sign up for it at http://academy.datastax.com - it's free!  Be sure to create a download key (token) for your downloads too.
 
 ## Make sure that Python is installed on all of the VMs
 If it isn't installed, then it won't work
@@ -51,10 +51,14 @@ Let's break down the switches:
 
 The script could take a few minutes to deploy so be patient.
 
+## Gotchas and things to know
+* Yes, I am using public IP addresses. I realize that your security team would feel better using a VPC and private IP addresses, but this demo is all about being quick and dirty. Feel free to adjust this to fit your needs.
+
 # Up next:
-* Turn on SSL
+* Automate the IaaS component of creating the VMs - almost done!
 * Deploy some cool stuff and make that cluster work for you (e.g. load testing, cool demos)
 
 # Credit to:
 * Wei Deng (weideng1)
 * Richard Lewis (Lewisr650)
+* Collin Poczatek (cpoczatek)
