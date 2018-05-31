@@ -20,8 +20,8 @@ ap.add_argument("-lcm", "--LCM_server_ip", required=True,
 	help="public IP address of the LCM server")
 ap.add_argument("-k", "--ssh_key", required=True,
 	help="private key to be used")
-ap.add_argument("-v", "--version", required=True,
-	help="private key to be used (e.g. 6.0.0)")
+#ap.add_argument("-v", "--version", required=True,
+#	help="version to be used (e.g. 6.0.0)")
 ap.add_argument("-n", "--cluster_name", required=True,
 	help="name of the cluster that you want to create")
 ap.add_argument("-s", "--server_list", required=True,
@@ -32,7 +32,7 @@ args = vars(ap.parse_args())
 
 server_ip = args["LCM_server_ip"]
 ssh_key = args["ssh_key"]
-dse_ver = args["version"]
+#dse_ver = args["version"]
 cluster_name = args["cluster_name"]
 server_list = args["server_list"]
 username = args["user"]
@@ -91,7 +91,7 @@ machine_credential_id = machine_credential_response['id']
 
 cluster_profile_response = do_post("config_profiles/",
     {"name": cluster_name,
-     "datastax-version": dse_ver,
+     "datastax-version": "6.0.0", #dse_ver,
 	 'json': {'cassandra-yaml' : {
                  'endpoint_snitch' : 'org.apache.cassandra.locator.GossipingPropertyFileSnitch',
                   'client_encryption_options' : {
@@ -136,7 +136,7 @@ for data_center in data_centers:
     dc_id = make_dc_response['id']
     data_center_ids[data_center] = dc_id
 
-for host in server_list: #sys.argv[1:]:
+for host in server_list:
     node_ip = host.split(":")[0]
     private_ip = host.split(":")[1]
     data_center = host.split(":")[2]

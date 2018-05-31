@@ -40,14 +40,13 @@ Format is: public-ip:private-ip:dc-name:node-number for example, I call it as mu
 ```
 
 ## From your laptop, run the following command:
-`python dse-multi-cloud-demo/setup.py -lcm 52.160.36.16 -u ubuntu -k keys/ubuntu -n dse-cluster -s dse-multi-cloud-demo/server-list -v 6.0.0`
+`python dse-multi-cloud-demo/setup.py -lcm 52.160.36.16 -u ubuntu -k keys/ubuntu -n dse-cluster -s dse-multi-cloud-demo/server-list`
 
 Let's break down the switches:
 * -u --> username that you'll use to log into all of the servers
 * -k --> location of the private key on your laptop
 * -n --> name of the dse cluster that you'd like to create
 * -s --> list of servers that you created in the previous step
-* -v --> version of DSE that you want to deploy
 
 The script could take a few minutes to deploy so be patient.
 
