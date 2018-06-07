@@ -16,7 +16,7 @@ Options:
                       default westus2
  -g resource-group  : name of resource-group to deploy,
                       default 'multi'
-
+testing to see if this worked
 ---------------------------------------------------"
 
 while getopts 'hl:g:' opt; do
