@@ -96,9 +96,14 @@ IPs are printed one line for each node, public then private, for AWS/Azure/GCP
 Example output:
 ```
 ./gather_ips.sh -g jcp-test
-52.183.115.113 10.0.0.6
-52.151.38.28 10.0.0.5
-52.151.34.154 10.0.0.4
+public-ip:private-ip:cloud-provider:node-number
+52.183.115.113:10.0.0.6:Azure:0
+52.151.38.28:10.0.0.5:AWS:0
+52.151.34.154:10.0.0.4:GCP:0
+
+Example command which will save it into a nice and tidy file:
+
+./gather_ips.sh -r us-east-2 -s jbreese-awesome-aws -d jbreese-awesome-azure -g jbreese-awesome-gcp | tee server-list
 ```
 
 ## `teardown.sh`
@@ -114,11 +119,15 @@ teardown.sh [-h] [-r region] [-s stack] [-g resource-group] [-d deployment-name]
 
 Options:
 
- -h                 : display this message and exit
- -r stack           : AWS region where 'stack' is deployed
+ -h help            : display this message and exit
+ -r region          : AWS region where 'stack' is deployed
  -s stack           : name of AWS CFn stack to delete
  -g resource-group  : name of Azure resource group to delete
  -d deployment-name : name of GCP gcloud deployment to delete
+
+ Example:
+
+ ./teardown.sh -r us-east-2 -s jbreese-awesome-aws -d jbreese-awesome-azure -g jbreese-awesome-gcp
 ```
 
 ---------------------------------------------------
