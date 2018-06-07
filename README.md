@@ -13,7 +13,7 @@ Choose your own adventure: do it yourself or use some scripts that are in the re
 * Use the same public key on all of the servers
 * Use the same username on all of the servers
 * Put the private key on your laptop
-* Make sure all of the DSE appropriate ports are open (e.g. nuclear option is 7000-65535)
+* Make sure all of the DSE appropriate ports are open (e.g. nuclear option is 7000-65535). For a list of all of the ports go to: https://docs.datastax.com/en/dse/6.0/dse-admin/datastax_enterprise/security/secFirewallPorts.html
 
 ### Use the scripts in the repo
 * To do this make sure you have installed the CLIs for whichever cloud providers that you want to use. I will be using Microsoft Azure, Amazon Web Services (AWS), and Google Cloud Platform (GCP)
@@ -24,14 +24,14 @@ Choose your own adventure: do it yourself or use some scripts that are in the re
 * An example command that you'd run for GCP: `./deploy_gcp.sh -d jbreese-awesome`
 * An example command that you'd run for AWS: `./deploy_aws.sh -s jbreese-awesome`
 
-## Set these environmental variables to whatever the values are for you in your .bash_profile:
+## Set these environmental variables in your .bash_profile:
 ```
 export cassandra_default_password="blah"
 export academy_user="blah"
 export academy_pass="blah"
 export academy_token="blah"
 ```
-If you don't have credentials for DataStax Academy, then go and sign up for it at http://academy.datastax.com - it's free!  Be sure to create a download key (token) for your downloads too.
+Be sure to replace `blah` with your credentials. If you don't have credentials for DataStax Academy, then go and sign up for it at http://academy.datastax.com - it's free!  Be sure to create a download key (token) for your downloads too.
 
 ## Create a text file that has your different VMs that you want in the cluster:
 Format is: public-ip:private-ip:dc-name:node-number for example, I call it as multi-list.txt below:
