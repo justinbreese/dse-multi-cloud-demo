@@ -6,14 +6,25 @@ Multi-cloud is starting to be very important for customers. By leveraging multip
 Yes, it is possible. And yes, you can do it!
 
 ## Create your VMs
-* Go to a few of your favorite public cloud providers and create some VMs!
+Choose your own adventure: do it yourself or use some scripts that are in the repo.
+
+### Go to a few of your favorite public cloud providers and create some VMs!
 * Make note of the public and private IP addresses of all of the VMs
 * Use the same public key on all of the servers
 * Use the same username on all of the servers
 * Put the private key on your laptop
 * Make sure all of the DSE appropriate ports are open (e.g. nuclear option is 7000-65535)
 
-## Set these environmental variables to whatever the values are for you:
+### Use the scripts in the repo
+* To do this make sure you have installed the CLIs for whichever cloud providers that you want to use. I will be using Microsoft Azure, Amazon Web Services (AWS), and Google Cloud Platform (GCP)
+    * Instructions on how to install the CLI for Azure: https://docs.microsoft.com/en-us/cli/azure/install-azure-cli?view=azure-cli-latest
+    * Instructions on how to install the CLI for AWS: https://docs.aws.amazon.com/cli/latest/userguide/installing.html
+    * Instructions on how to install the CLI for GCP: https://cloud.google.com/sdk/
+* An example command that you'd run for Azure: `./deploy_azure.sh -g jbreese-awesome`
+* An example command that you'd run for GCP: `./deploy_gcp.sh -d jbreese-awesome`
+* An example command that you'd run for AWS: `./deploy_aws.sh -s jbreese-awesome`
+
+## Set these environmental variables to whatever the values are for you in your .bash_profile:
 ```
 export cassandra_default_password="blah"
 export academy_user="blah"
@@ -21,9 +32,6 @@ export academy_pass="blah"
 export academy_token="blah"
 ```
 If you don't have credentials for DataStax Academy, then go and sign up for it at http://academy.datastax.com - it's free!  Be sure to create a download key (token) for your downloads too.
-
-## Make sure that Python is installed on all of the VMs
-If it isn't installed, then it won't work
 
 ## Create a text file that has your different VMs that you want in the cluster:
 Format is: public-ip:private-ip:dc-name:node-number for example, I call it as multi-list.txt below:
@@ -43,6 +51,7 @@ Format is: public-ip:private-ip:dc-name:node-number for example, I call it as mu
 `python dse-multi-cloud-demo/setup.py -lcm 52.160.36.16 -u ubuntu -k keys/ubuntu -n dse-cluster -s dse-multi-cloud-demo/server-list`
 
 Let's break down the switches:
+* -lcm --> the public IP address of the server that you wish to designate as the DataStax OpsCenter Server; this will be the main server that all of the other nodes will be configured by
 * -u --> username that you'll use to log into all of the servers
 * -k --> location of the private key on your laptop
 * -n --> name of the dse cluster that you'd like to create
@@ -52,9 +61,9 @@ The script could take a few minutes to deploy so be patient.
 
 ## Gotchas and things to know
 * Yes, I am using public IP addresses. I realize that your security team would feel better using a VPC and private IP addresses, but this demo is all about being quick and dirty. Feel free to adjust this to fit your needs.
+* Make sure that Python is installed on all of the VMs
 
 # Up next:
-* Automate the IaaS component of creating the VMs - almost done!
 * Deploy some cool stuff and make that cluster work for you (e.g. load testing, cool demos)
 
 # Credit to:
