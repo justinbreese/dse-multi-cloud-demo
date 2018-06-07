@@ -1,6 +1,6 @@
 
 # Overview
-These scripts and templates deploy bare VMs in AWS, GCP, or Azure, gather their public/private ips, and tear down the deployments. The number/type of VM can be changes in the `param.json` files for each cloud.
+These scripts and templates deploy bare VMs (Ubuntu) in AWS, GCP, or Azure, gather their public/private ips, and tear down the deployments. The number/type of VM can be changes in the `param.json` files for each cloud.
 All scripts understand `-h` and should be self documenting. Things to note:
 * the AWS deployment creates no network resources, set the `VPC`, `Subnets`, and `AvailabilityZones` parameters to those of your default VPC **in the region you are deploying to**
 * the `Subnets` and `AvailabilityZones` parameters are comma separated lists of values and **must have length 3**, ie 3 subnets and 3 AZs
