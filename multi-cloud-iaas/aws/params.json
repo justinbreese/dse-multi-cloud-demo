@@ -1,0 +1,18 @@
+[
+  {
+    "ParameterKey": "KeyName",
+    "ParameterValue": "jbreese-multicloud-ubuntu"
+  },
+  {
+    "ParameterKey": "VPC",
+    "ParameterValue": "vpc-641eba03"
+  },
+  {
+    "ParameterKey": "AvailabilityZones",
+    "ParameterValue": "us-east-1a,us-east-1b,us-east-1c"
+  },
+  {
+    "ParameterKey": "Subnets",
+    "ParameterValue": "subnet-7e6f5308,subnet-cf4d0497,subnet-8e27baeb"
+  }
+]

@@ -1,0 +1,122 @@
+
+# Overview
+These scripts and templates deploy bare VMs in AWS or Azure, gather their public/private ips,
+and tear down the deployments. The number/type of VM can be changes in the `param.json` files for each cloud.
+All scripts understand `-h` and should be self documenting. Things to note:
+* the AWS deployment creates no network resources, set the VPC and subnet parameters to your default VPC **in the region you are deploying to**
+* the deploy scripts block until the resource creation completes
+* `teardown.sh` does not prompt or block and places resources in a 'deleting' state immediately
+
+## `deploy_aws.sh`
+
+```
+./deploy_aws.sh -h
+---------------------------------------------------
+Deploys vms based on params in ./aws/params.json
+in a CFn stack.
+
+Usage:
+deploy.sh [-h] [-r region] [-s stack]
+
+Options:
+
+ -h                 : display this message and exit
+ -r region          : AWS region where 'stack' will be deployed,
+                      default us-east-1
+ -s stack           : name of AWS CFn stack to deploy,
+                      default 'multi'
+
+---------------------------------------------------
+```
+
+## `deploy_azure.sh`
+```
+./deploy_azure.sh -h
+---------------------------------------------------
+Deploys vms based on params in ./azure/params.json to
+a resource group.
+
+Usage:
+deploy.sh [-h] [-l region] [-g resource-group]
+
+Options:
+
+ -h                 : display this message and exit
+ -l region          : Azure region where 'resource-group' will be deployed,
+                      default westus2
+ -g resource-group  : name of resource-group to deploy,
+                      default 'multi'
+
+---------------------------------------------------
+```
+
+## `deploy_gcp.sh`
+```
+./deploy_gcp.sh -h
+---------------------------------------------------
+Deploys vms in GCP based on parameters in ./gcp/clusterParameters.yaml
+using Google Deployment Manager (deployment-manager).
+
+Usage:
+deploy.sh [-h] [-d deployment-name]
+
+Options:
+
+ -h                 : display this message and exit
+ -d deployment-name : name of GCP gcloud deployment [required]
+
+---------------------------------------------------
+```
+
+## `gather_ips.sh`
+```
+./gather_ips.sh -h
+---------------------------------------------------
+Gathers public/private ips deployed in resource group or stack,
+prints to stdout 1 pair of ips per line.
+
+Usage:
+deploy.sh [-h] [-r region] [-g resource-group] [-s stack] [-d deployment-name]
+-g OR -s REQUIRED
+-r REQUIRED if passing -s, should be first arg
+
+Options:
+
+ -h                 : display this message and exit
+ -r stack           : AWS region where 'stack' is deployed
+ -s stack           : name of AWS CFn stack to gather node ips from
+ -g resource-group  : name of Azure resource group to gather node ips from
+ -d deployment-name : name of GCP gcloud deployment to gather node ips from
+
+---------------------------------------------------
+```
+IPs are printed one line for each node, public then private, for AWS/Azure/GCP
+Example output:
+```
+./gather_ips.sh -g jcp-test
+52.183.115.113 10.0.0.6
+52.151.38.28 10.0.0.5
+52.151.34.154 10.0.0.4
+```
+
+## `teardown.sh`
+```
+./teardown.sh -h
+---------------------------------------------------
+Delete either AWS CFn stack, Azure resource group, GCP deployment group or all.
+
+Usage:
+teardown.sh [-h] [-r region] [-s stack] [-g resource-group] [-d deployment-name]
+-g OR -s REQUIRED
+-r REQUIRED if passing -s, should be first arg
+
+Options:
+
+ -h                 : display this message and exit
+ -r stack           : AWS region where 'stack' is deployed
+ -s stack           : name of AWS CFn stack to delete
+ -g resource-group  : name of Azure resource group to delete
+ -d deployment-name : name of GCP gcloud deployment to delete
+```
+
+---------------------------------------------------

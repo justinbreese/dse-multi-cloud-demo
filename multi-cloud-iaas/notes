@@ -1,0 +1,79 @@
+
+
+
+==========================================================
+Azure
+==========================================================
+
+
+rg='jcp-test'
+az group create --name $rg --location "westus2"
+az group deployment create \
+--resource-group $rg \
+--template-file ./azure/template-vnet.json \
+--verbose
+
+az group deployment create \
+--resource-group $rg \
+--template-file ./azure/nodes.json \
+--parameters @parameters-nodes.json \
+--verbose
+
+
+jcp@tenkara:multi$ az vm show -g jcp-test -n dc0vm0 -d --query privateIps
+"10.0.0.5"
+jcp@tenkara:multi$ az vm show -g jcp-test -n dc0vm0 -d --query publicIps
+"52.229.63.88"
+
+
+
+
+"outputs": {
+  "vm0ip": {
+    "type": "string",
+    "value": "[reference(resourceId('Microsoft.Network/publicIPAddresses',concat(parameters('namespace'), 'vm0'))).IpAddress]"
+  },
+  "array": {
+      "copy": [
+          {
+              "name": "vms",
+              "count": "[parameters('nodeCount')]",
+              "input": {
+                  "name": "[concat(parameters('namespace'), 'vm', copyindex())]",
+                  "publicIP": "[reference(resourceId('Microsoft.Network/publicIPAddresses',concat(parameters('namespace'), 'vm', copyindex() ))).IpAddress]",
+                  "privateIP": "[copyIndex('vms')]"
+              }
+          }
+      ]
+  }
+}
+
+
+
+"osSettings": {
+  "imageReference": {
+    "publisher": "datastax",
+    "offer": "datastax-enterprise",
+    "sku": "datastaxenterprise",
+    "version": "latest"
+  }
+}
+
+
+==========================================================
+AWS
+==========================================================
+
+stackname='test'
+aws cloudformation create-stack  \
+--region us-east-1 \
+--stack-name $stackname  \
+--disable-rollback  \
+--capabilities CAPABILITY_IAM  \
+--template-body file://$(pwd)/aws/datacenter.template  \
+--parameters file://$(pwd)/aws/params.json
+
+aws cloudformation describe-stack-resources --stack-name $stackname
+aws autoscaling describe-auto-scaling-groups --auto-scaling-group-names test-CassandraGroup-UI0E6UPDCTQB
+aws ec2 describe-instances --instance-ids i-06b18d77d2063f777 i-0bed05fe7fe9c32a2 i-0f3872a7532ce55d9 --query "Reservations[*].Instances[*].PublicIpAddress"
+aws ec2 describe-instances --instance-ids i-06b18d77d2063f777 i-0bed05fe7fe9c32a2 i-0f3872a7532ce55d9 --query "Reservations[*].Instances[*].PrivateIpAddress"
