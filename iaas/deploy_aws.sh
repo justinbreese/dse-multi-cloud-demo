@@ -1,6 +1,6 @@
 #!/bin/bash
 
-region='us-west-2'
+region='us-east-1'
 stackname='multi'
 usage="---------------------------------------------------
 Deploys vms based on params in ./aws/params.json
@@ -13,7 +13,7 @@ Options:
 
  -h                 : display this message and exit
  -r region          : AWS region where 'stack' will be deployed,
-                      default us-west-2
+                      default us-east-1
  -s stack           : name of AWS CFn stack to deploy,
                       default 'multi'
 
