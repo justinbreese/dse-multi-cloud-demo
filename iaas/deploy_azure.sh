@@ -1,7 +1,7 @@
 #!/bin/bash
 
 rg='multi'
-loc="westus2"
+loc="westus"
 usage="---------------------------------------------------
 Deploys vms based on params in ./azure/params.json to
 a resource group.
@@ -48,4 +48,3 @@ az group deployment create \
 --parameters @./azure/params.json \
 --parameters '{"uniqueString": {"value": "'$rand'"}}' \
 --verbose
-

@@ -20,8 +20,6 @@ ap.add_argument("-lcm", "--LCM_server_ip", required=True,
 	help="public IP address of the LCM server")
 ap.add_argument("-k", "--ssh_key", required=True,
 	help="private key to be used")
-#ap.add_argument("-v", "--version", required=True,
-#	help="version to be used (e.g. 6.0.0)")
 ap.add_argument("-n", "--cluster_name", required=True,
 	help="name of the cluster that you want to create")
 ap.add_argument("-s", "--server_list", required=True,
@@ -32,7 +30,6 @@ args = vars(ap.parse_args())
 
 server_ip = args["LCM_server_ip"]
 ssh_key = args["ssh_key"]
-#dse_ver = args["version"]
 cluster_name = args["cluster_name"]
 server_list = args["server_list"]
 username = args["user"]

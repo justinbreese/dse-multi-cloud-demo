@@ -4,7 +4,7 @@
     "parameters": {
       "location": {
         "type": "string",
-        "defaultValue": "westus2",
+        "defaultValue": "westus",
         "metadata": {
           "description": "Region deploying into"
         }
