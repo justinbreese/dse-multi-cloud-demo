@@ -130,7 +130,7 @@ Example output:
 ```
 Example command which will save it into a nice and tidy file:
 
-`./gather_ips.sh -r us-east-2 -s jbreese-awesome-aws -d jbreese-awesome-azure -g jbreese-awesome-gcp | tee server-list`
+`./gather_ips.sh -s jbreese-awesome-aws -d jbreese-awesome-azure -g jbreese-awesome-gcp | tee server-list`
 
 Then you can use that tidy file when you run the `setup.py` script from the main directory of this repo.
 
