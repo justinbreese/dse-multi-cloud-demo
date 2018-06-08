@@ -13,16 +13,12 @@ Choose your own adventure: do it yourself or use some scripts that are in the re
 * Use the same public key on all of the servers
 * Use the same username on all of the servers
 * Put the private key on your laptop
-* Make sure all of the DSE appropriate ports are open (e.g. nuclear option is 7000-65535). For a list of all of the ports go to: https://docs.datastax.com/en/dse/6.0/dse-admin/datastax_enterprise/security/secFirewallPorts.html
+* Make sure all of the DSE appropriate ports are open. For a list of all of the ports go to: https://docs.datastax.com/en/dse/6.0/dse-admin/datastax_enterprise/security/secFirewallPorts.html
+* If you don't want to open up the specific ports for DSE, then you can do the nuclear option and open all all of the following ports: 7000-65535
 
 ### Use the scripts in the repo
-* To do this make sure you have installed the CLIs for whichever cloud providers that you want to use. I will be using Microsoft Azure, Amazon Web Services (AWS), and Google Cloud Platform (GCP)
-    * Instructions on how to install the CLI for Azure: https://docs.microsoft.com/en-us/cli/azure/install-azure-cli?view=azure-cli-latest
-    * Instructions on how to install the CLI for AWS: https://docs.aws.amazon.com/cli/latest/userguide/installing.html
-    * Instructions on how to install the CLI for GCP: https://cloud.google.com/sdk/
-* An example command that you'd run for Azure: `./deploy_azure.sh -g jbreese-awesome`
-* An example command that you'd run for GCP: `./deploy_gcp.sh -d jbreese-awesome`
-* An example command that you'd run for AWS: `./deploy_aws.sh -s jbreese-awesome`
+* Check out the `iaas` directory in this repo for a full README on how this works
+* There is complete automation for Azure, GCP, and AWS
 
 ## Set these environmental variables in your .bash_profile:
 ```
@@ -34,7 +30,10 @@ export academy_token="blah"
 Be sure to replace `blah` with your credentials. If you don't have credentials for DataStax Academy, then go and sign up for it at http://academy.datastax.com - it's free!  Be sure to create a download key (token) for your downloads too.
 
 ## Create a text file that has your different VMs that you want in the cluster:
-Format is: public-ip:private-ip:dc-name:node-number for example, I call it as multi-list.txt below:
+Again, choose your own adventure...
+* If you're leveraging the scripts in the `iaas` folder to create your infrastructure, then you can do a command like `./gather_ips.sh -r us-east-2 -s jbreese-awesome-aws -d jbreese-awesome-azure -g jbreese-awesome-gcp | tee server-list` in order to put the list together and save it into a simple file that you will use in the next step for `setup.py`
+* Otherwise, if you want to put your list together manually:
+  * Create a generic text file and format your VMs like this: `public-ip:private-ip:dc-name:node-number` for example, I call it as server-list below:
 ```
 18.236.78.240:172.31.16.53:aws:0
 34.217.211.58:172.31.21.235:aws:1
@@ -46,12 +45,14 @@ Format is: public-ip:private-ip:dc-name:node-number for example, I call it as mu
 104.42.168.14:172.16.0.4:azure:1
 104.42.173.219:172.16.0.4:azure:2
 ```
-
-## From your laptop, run the following command:
+* *Very important* Decide which VM you want to be acting as your OpsCenter node:
+  * Make a note of the public IP address
+  * Delete that entry from your `server-list` file - We don't want to make your OpsCenter VM a DSE node as well
+## From your laptop, here is an example command to get everything setup command:
 `python dse-multi-cloud-demo/setup.py -lcm 52.160.36.16 -u ubuntu -k keys/ubuntu -n dse-cluster -s dse-multi-cloud-demo/server-list`
 
 Let's break down the switches:
-* -lcm --> the public IP address of the server that you wish to designate as the DataStax OpsCenter Server; this will be the main server that all of the other nodes will be configured by
+* -lcm --> the public IP address of the server that you wish to designate as the DataStax OpsCenter Server; this will be the main server that all of the other nodes will be configured by. *Do not include this entry in your server list file. We don't want to make your OpsCenter VM a DSE node as well*
 * -u --> username that you'll use to log into all of the servers
 * -k --> location of the private key on your laptop
 * -n --> name of the dse cluster that you'd like to create

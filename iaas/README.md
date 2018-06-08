@@ -13,6 +13,14 @@ All scripts understand `-h` and should be self documenting. Things to note:
 * the `deploy_<cloud-provider>.sh` scripts block until the resource creation completes
 * `teardown.sh` does not prompt or block and places resources in a 'deleting' state immediately
 
+* Make sure that you have installed the CLIs for whichever cloud providers that you want to use. I will be using Microsoft Azure, Amazon Web Services (AWS), and Google Cloud Platform (GCP)
+    * Instructions on how to install the CLI for Azure: https://docs.microsoft.com/en-us/cli/azure/install-azure-cli?view=azure-cli-latest
+    * Instructions on how to install the CLI for AWS: https://docs.aws.amazon.com/cli/latest/userguide/installing.html
+    * Instructions on how to install the CLI for GCP: https://cloud.google.com/sdk/
+* An example command that you'd run for Azure: `./deploy_azure.sh -g jbreese-awesome`
+* An example command that you'd run for GCP: `./deploy_gcp.sh -d jbreese-awesome`
+* An example command that you'd run for AWS: `./deploy_aws.sh -s jbreese-awesome`
+
 ## `deploy_aws.sh`
 
 ```
@@ -96,19 +104,19 @@ Options:
 
 ---------------------------------------------------
 ```
-IPs are printed one line for each node, public then private, for AWS/Azure/GCP
+IPs are printed one line for each VM in the following format, `public-ip:private-ip:cloud-provider:node-number`, for AWS, Azure, and GCP
 Example output:
 ```
 ./gather_ips.sh -g jcp-test
-public-ip:private-ip:cloud-provider:node-number
 52.183.115.113:10.0.0.6:Azure:0
 52.151.38.28:10.0.0.5:AWS:0
 52.151.34.154:10.0.0.4:GCP:0
-
+```
 Example command which will save it into a nice and tidy file:
 
-./gather_ips.sh -r us-east-2 -s jbreese-awesome-aws -d jbreese-awesome-azure -g jbreese-awesome-gcp | tee server-list
-```
+`./gather_ips.sh -r us-east-2 -s jbreese-awesome-aws -d jbreese-awesome-azure -g jbreese-awesome-gcp | tee server-list`
+
+Then you can use that tidy file when you run the `setup.py` script from the main directory of this repo.
 
 ## `teardown.sh`
 ```
