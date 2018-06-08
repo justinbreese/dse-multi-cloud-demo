@@ -12,13 +12,13 @@ deploy.sh [-h] [-r region] [-g resource-group] [-s stack] [-d deployment-name]
 Options:
 
  -h                  : display this message and exit
- -r stack            : AWS region where 'stack' is deployed
+ -r region           : AWS region where 'stack' is deployed, us-west-2 is default
  -s stack            : name of AWS CFn stack to gather node ips from
  -g resource-group   : name of Azure resource group to gather node ips from
  -d deployment-name  : name of GCP gcloud deployment to gather node ips from
 
 ---------------------------------------------------"
-
+region='us-west-2' #default region
 
 while getopts 'hr:g:s:d:' opt; do
   case $opt in

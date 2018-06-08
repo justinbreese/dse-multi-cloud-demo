@@ -11,13 +11,13 @@ deploy.sh [-h] [-r region] [-s stack] [-g resource-group]
 Options:
 
  -h                 : display this message and exit
- -r stack           : AWS region where 'stack' is deployed
+ -r region          : AWS region where 'stack' is deployed, us-west-2 is default
  -s stack           : name of AWS CFn stack to delete
  -g resource-group  : name of Azure resource group to delete
  -d deployment-name : name of GCP gcloud deployment to delete
 
 ---------------------------------------------------"
-
+region='us-west-2' #default region
 
 while getopts 'hr:g:s:d:' opt; do
   case $opt in
