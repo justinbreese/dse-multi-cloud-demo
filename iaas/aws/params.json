@@ -5,14 +5,14 @@
   },
   {
     "ParameterKey": "VPC",
-    "ParameterValue": "vpc-641eba03"
+    "ParameterValue": "vpc-70141d15"
   },
   {
     "ParameterKey": "AvailabilityZones",
-    "ParameterValue": "us-east-1a,us-east-1b,us-east-1c"
+    "ParameterValue": "us-west-2a,us-west-2b,us-west-2c"
   },
   {
     "ParameterKey": "Subnets",
-    "ParameterValue": "subnet-7e6f5308,subnet-cf4d0497,subnet-8e27baeb"
+    "ParameterValue": "subnet-b5f6ead0,subnet-cbefa192,subnet-0982b37e"
   }
 ]

@@ -32,8 +32,8 @@ def GenerateConfig(context):
                 'items': [
                     {
                         'key': 'ssh-keys',
-                        'value': 'ubuntu:ssh-rsa ' + context.properties['sshKeyValue'] + ' ubuntu'
-                    }                    
+                        'value': 'ubuntu:ssh-rsa ' + context.properties['sshKeyValue']# + ' ubuntu'
+                    }
                 ]
             },
             'tags': {

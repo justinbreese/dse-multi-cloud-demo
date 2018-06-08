@@ -2,11 +2,15 @@
 # Overview
 These scripts and templates deploy bare VMs (Ubuntu) in AWS, GCP, or Azure, gather their public/private ips, and tear down the deployments. The number/type of VM can be changes in the `param.json` files for each cloud.
 All scripts understand `-h` and should be self documenting. Things to note:
-* the AWS deployment creates no network resources, set the `VPC`, `Subnets`, and `AvailabilityZones` parameters to those of your default VPC **in the region you are deploying to**
-* the `Subnets` and `AvailabilityZones` parameters are comma separated lists of values and **must have length 3**, ie 3 subnets and 3 AZs
-* the order of the `Subnets` and `AvailabilityZones` parameters **must match**, ie if `subnet-123456` is in `us-east-1a` these should be the first values in the list
-* these network values can be found in the portal, or by running these commands: `aws ec2 describe-vpcs --region us-east-1` and `aws ec2 describe-subnets --region us-east-1`
-* the deploy scripts block until the resource creation completes
+
+## AWS
+* The AWS deployment creates no network resources, set the `VPC`, `Subnets`, and `AvailabilityZones` parameters to those of your default VPC **in the region you are deploying to**
+* The `Subnets` and `AvailabilityZones` parameters are comma separated lists of values and **must have length 3**, ie 3 subnets and 3 AZs
+* The order of the `Subnets` and `AvailabilityZones` parameters **must match**, ie if `subnet-123456` is in `us-east-1a` these should be the first values in the list
+* These network values can be found in the portal, or by running these commands: `aws ec2 describe-vpcs --region us-east-1` and `aws ec2 describe-subnets --region us-east-1`
+* You need to create the key pair first and then reference it by name within the `params.json` file. You can do this by going to the `AWS console --> EC2 --> Network and Security --> Key Pairs`
+
+* the `deploy_<cloud-provider>.sh` scripts block until the resource creation completes
 * `teardown.sh` does not prompt or block and places resources in a 'deleting' state immediately
 
 ## `deploy_aws.sh`
@@ -24,7 +28,7 @@ Options:
 
  -h                 : display this message and exit
  -r region          : AWS region where 'stack' will be deployed,
-                      default us-east-1
+                      default us-west-2
  -s stack           : name of AWS CFn stack to deploy,
                       default 'multi'
 

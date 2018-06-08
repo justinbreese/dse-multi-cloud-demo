@@ -41,7 +41,7 @@ while getopts 'hr:g:s:d:' opt; do
     ;;
     d) deploy="$OPTARG"
       echo "Deleting GCP gcloud deployment: $deploy"
-      gcloud deployment-manager deployments delete $deploy
+      gcloud deployment-manager deployments delete $deploy -q
     ;;
     \?) echo "Invalid option -$OPTARG" >&2
         exit 1
