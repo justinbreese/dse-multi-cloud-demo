@@ -52,11 +52,12 @@ while getopts 'hr:g:s:d:' opt; do
 
       instances=$(aws --region $region autoscaling describe-auto-scaling-groups --auto-scaling-group-names $physid | \
        jq ' .AutoScalingGroups[0] | .Instances[].InstanceId ' | tr "\n" " " | tr -d '"')
-
+       cnt=0
        for i in $instances; do
          pubip=$(aws --region $region ec2 describe-instances --instance-ids $i | jq ' .Reservations[].Instances[].PublicIpAddress ' | tr -d '"')
          privip=$(aws --region $region ec2 describe-instances --instance-ids $i | jq ' .Reservations[].Instances[].PrivateIpAddress ' | tr -d '"')
-         echo $pubip':'$privip':AWS:'$i
+         echo $pubip':'$privip':AWS:'$cnt
+         cnt=$((cnt+1))
        done
        #exit 0
     ;;
