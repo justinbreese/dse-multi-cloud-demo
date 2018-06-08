@@ -1,9 +1,20 @@
 
 # Overview
 These scripts and templates deploy bare VMs (Ubuntu) in AWS, GCP, or Azure, gather their public/private ips, and tear down the deployments. The number/type of VM can be changes in the `param.json` files for each cloud.
-All scripts understand `-h` and should be self documenting. Things to note:
+All scripts understand `-h` and should be self documenting.
 
-## AWS
+Feel free to use the key pair (`ubuntu` and `ubuntu.pub`) in this directory
+
+## Install the CLIs for the cloud providers that you want to test
+* Make sure that you have installed the CLIs for whichever cloud providers that you want to use. I will be using Microsoft Azure, Amazon Web Services (AWS), and Google Cloud Platform (GCP) for this example
+    * Instructions on how to install the CLI for Azure: https://docs.microsoft.com/en-us/cli/azure/install-azure-cli?view=azure-cli-latest
+    * Instructions on how to install the CLI for AWS: https://docs.aws.amazon.com/cli/latest/userguide/installing.html
+    * Instructions on how to install the CLI for GCP: https://cloud.google.com/sdk/
+* An example command that you'd run for Azure: `./deploy_azure.sh -g jbreese-awesome`
+* An example command that you'd run for GCP: `./deploy_gcp.sh -d jbreese-awesome`
+* An example command that you'd run for AWS: `./deploy_aws.sh -s jbreese-awesome`
+
+## Important things to know for AWS
 * The AWS deployment creates no network resources, set the `VPC`, `Subnets`, and `AvailabilityZones` parameters to those of your default VPC **in the region you are deploying to**
 * The `Subnets` and `AvailabilityZones` parameters are comma separated lists of values and **must have length 3**, ie 3 subnets and 3 AZs
 * The order of the `Subnets` and `AvailabilityZones` parameters **must match**, ie if `subnet-123456` is in `us-east-1a` these should be the first values in the list
@@ -12,14 +23,6 @@ All scripts understand `-h` and should be self documenting. Things to note:
 
 * the `deploy_<cloud-provider>.sh` scripts block until the resource creation completes
 * `teardown.sh` does not prompt or block and places resources in a 'deleting' state immediately
-
-* Make sure that you have installed the CLIs for whichever cloud providers that you want to use. I will be using Microsoft Azure, Amazon Web Services (AWS), and Google Cloud Platform (GCP)
-    * Instructions on how to install the CLI for Azure: https://docs.microsoft.com/en-us/cli/azure/install-azure-cli?view=azure-cli-latest
-    * Instructions on how to install the CLI for AWS: https://docs.aws.amazon.com/cli/latest/userguide/installing.html
-    * Instructions on how to install the CLI for GCP: https://cloud.google.com/sdk/
-* An example command that you'd run for Azure: `./deploy_azure.sh -g jbreese-awesome`
-* An example command that you'd run for GCP: `./deploy_gcp.sh -d jbreese-awesome`
-* An example command that you'd run for AWS: `./deploy_aws.sh -s jbreese-awesome`
 
 ## `deploy_aws.sh`
 
