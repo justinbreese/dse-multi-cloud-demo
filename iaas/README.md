@@ -22,8 +22,8 @@ Feel free to use the key pair (`ubuntu` and `ubuntu.pub`) in this directory
 ## Gather the IP addresses of the clusters that you made:
 * You can run the `gather_ips.sh` and the appropriate switches to get the public and private IP addresses from the deployed VMs in the given cloud providers.
 * Using the above example, I created deployments in each of Azure, GCP, and AWS:
-* `tee` out `./gather_ips.sh` to save everything into a nice and tidy file.
-  * `./gather_ips.sh -s jbreese-awesome-aws -d jbreese-awesome-azure -g jbreese-awesome-gcp | tee server-list`
+* `tee` out `./gather_ips.sh` to save everything into a nice and tidy file:
+  `./gather_ips.sh -s jbreese-awesome-aws -d jbreese-awesome-azure -g jbreese-awesome-gcp | tee server-list`
 * Make note of that file you just created, `server-list`, and now use that in `setup.py` from main repo directory.
 
 ## Fun facts
