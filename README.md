@@ -30,7 +30,7 @@ Be sure to replace `blah` with your credentials. If you don't have credentials f
 
 ## Create a text file that has your different VMs that you want in the cluster:
 Again, choose your own adventure...
-* If you're leveraging the scripts in the `iaas` folder to create your infrastructure, then you probably already put your list together via the `gather_ips.sh` script. If you already have your list, then skip the rest of this section. If you do not have your list, then go back to the iaas/README.md and use revisit the `gather_ips.sh` section.
+* If you're leveraging the scripts in the `iaas` folder to create your infrastructure, then you probably already put your list together via the `gather_ips.sh` script. If you already have your list, then skip the rest of this section. If you do not have your list yet, then go back to the iaas/README.md and use revisit the `gather_ips.sh` section.
 * Otherwise, if you need to put your list together manually:
   * Create a generic text file and format your VMs like this: `public-ip:private-ip:dc-name:node-number` for example, I call it as server-list below:
 ```
@@ -47,11 +47,13 @@ Again, choose your own adventure...
 * *Very important* Decide which VM you want to be acting as your OpsCenter node:
   * Make a note of the public IP address
   * Delete that entry from your `server-list` file - We don't want to make your OpsCenter VM a DSE node as well
+
 ## From your laptop, here is an example command to get everything setup command:
+It is time to setup your cluster using the `setup.py` script. Here is an example:
 `python dse-multi-cloud-demo/setup.py -lcm 52.160.36.16 -u ubuntu -k keys/ubuntu -n dse-cluster -s dse-multi-cloud-demo/server-list`
 
 Let's break down the switches:
-* -lcm --> the public IP address of the server that you wish to designate as the DataStax OpsCenter Server; this will be the main server that all of the other nodes will be configured by. *Do not include this entry in your server list file. We don't want to make your OpsCenter VM a DSE node as well*
+* -lcm --> this is the public IP address of the server that you wish to designate as the DataStax OpsCenter Server; this will be the main server that all of the other nodes will be configured by. *Make sure that this entry is not in your server list file. We don't want to make your OpsCenter VM a DSE node as well*
 * -u --> username that you'll use to log into all of the servers
 * -k --> location of the private key on your laptop
 * -n --> name of the dse cluster that you'd like to create

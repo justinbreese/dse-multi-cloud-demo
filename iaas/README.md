@@ -6,7 +6,7 @@ All scripts understand `-h` for help and should be self documenting.
 
 Feel free to use the key pair (`ubuntu` and `ubuntu.pub`) in this directory
 
-## Install the CLIs for the cloud providers and jq
+# Install the CLIs for the cloud providers and jq
 * Make sure that you have installed the CLIs for whichever cloud providers that you want to use. I will be using Microsoft Azure, Amazon Web Services (AWS), and Google Cloud Platform (GCP) for this example
     * Instructions on how to install the CLI for Azure: https://docs.microsoft.com/en-us/cli/azure/install-azure-cli?view=azure-cli-latest
     * Instructions on how to install the CLI for AWS: https://docs.aws.amazon.com/cli/latest/userguide/installing.html
@@ -14,18 +14,25 @@ Feel free to use the key pair (`ubuntu` and `ubuntu.pub`) in this directory
 * After you've installed the CLIs, be sure to configure each one so that you can use them. Important: make sure that the default output for all of the CLIs is json. You do this during configuration.
 * Install jq: `sudo apt-get install jq` - you will need this for the scripts to successfully parse json.
 
-## Deploy some VMs on each cloud provider
+# Deploy some VMs on each cloud provider
 * An example command that you can run for Azure: `./deploy_azure.sh -g jbreese-awesome`
 * An example command that you can run for GCP: `./deploy_gcp.sh -d jbreese-awesome`
 * An example command that you can run for AWS: `./deploy_aws.sh -s jbreese-awesome`
 * Read all about the specifics below for each of the commands (e.g. change default region)
 
-## Gather the IP addresses of the clusters that you made:
+# Gather the IP addresses of the clusters that you made:
 * You can run the `gather_ips.sh` and the appropriate switches to get the public and private IP addresses from the deployed VMs in the given cloud providers.
 * Using the above example, I created deployments in each of Azure, GCP, and AWS:
 * `tee` out `./gather_ips.sh` to save everything into a nice and tidy file:
   `./gather_ips.sh -s jbreese-awesome-aws -d jbreese-awesome-azure -g jbreese-awesome-gcp | tee server-list`
-* Make note of that file you just created, `server-list`, and now use that in `setup.py` from main repo directory.
+* *Very important* Decide which VM you want to be acting as your OpsCenter node:
+    * Make a note of the public IP address
+    * Delete that entry from your `server-list` file - we don't want to make your OpsCenter VM a DSE node as well
+
+# Now go back to the main directory and setup your cluster!
+* You have successfully created your infrastructure - congrats!
+* Make note of that file you just created, `server-list`, and now use that in `setup.py` from the main repo directory.
+
 
 ## Fun facts
 * the `deploy_<cloud-provider>.sh` scripts block until the resource creation completes
