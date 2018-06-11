@@ -44,7 +44,7 @@ Again, choose your own adventure...
 104.42.168.14:172.16.0.4:azure:1
 104.42.173.219:172.16.0.4:azure:2
 ```
-* *Very important* Decide which VM you want to be acting as your OpsCenter node:
+* **Very important** Decide which VM you want to be acting as your OpsCenter node:
   * Make a note of the public IP address
   * Delete that entry from your `server-list` file - We don't want to make your OpsCenter VM a DSE node as well
 
