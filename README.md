@@ -30,8 +30,8 @@ Be sure to replace `blah` with your credentials. If you don't have credentials f
 
 ## Create a text file that has your different VMs that you want in the cluster:
 Again, choose your own adventure...
-* If you're leveraging the scripts in the `iaas` folder to create your infrastructure, then you can do a command like `./gather_ips.sh -r us-east-2 -s jbreese-awesome-aws -d jbreese-awesome-azure -g jbreese-awesome-gcp | tee server-list` in order to put the list together and save it into a simple file that you will use in the next step for `setup.py`
-* Otherwise, if you want to put your list together manually:
+* If you're leveraging the scripts in the `iaas` folder to create your infrastructure, then you probably already put your list together via the `gather_ips.sh` script. If you already have your list, then skip the rest of this section. If you do not have your list, then go back to the iaas/README.md and use revisit the `gather_ips.sh` section.
+* Otherwise, if you need to put your list together manually:
   * Create a generic text file and format your VMs like this: `public-ip:private-ip:dc-name:node-number` for example, I call it as server-list below:
 ```
 18.236.78.240:172.31.16.53:aws:0

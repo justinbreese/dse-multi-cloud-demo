@@ -1,7 +1,8 @@
 
 # Overview
 These scripts and templates deploy bare VMs (Ubuntu) in AWS, GCP, or Azure, gather their public/private ips, and tear down the deployments. The number/type of VM can be changes in the `param.json` files for each cloud.
-All scripts understand `-h` and should be self documenting.
+
+All scripts understand `-h` for help and should be self documenting.
 
 Feel free to use the key pair (`ubuntu` and `ubuntu.pub`) in this directory
 
@@ -10,14 +11,14 @@ Feel free to use the key pair (`ubuntu` and `ubuntu.pub`) in this directory
     * Instructions on how to install the CLI for Azure: https://docs.microsoft.com/en-us/cli/azure/install-azure-cli?view=azure-cli-latest
     * Instructions on how to install the CLI for AWS: https://docs.aws.amazon.com/cli/latest/userguide/installing.html
     * Instructions on how to install the CLI for GCP: https://cloud.google.com/sdk/
-* After you've installed the CLIs, be sure to configure each one so that you can use them.
-* Install jq: `sudo apt-get install jq`
+* After you've installed the CLIs, be sure to configure each one so that you can use them. Important: make sure that the default output for all of the CLIs is json. You do this during configuration.
+* Install jq: `sudo apt-get install jq` - you will need this for the scripts to successfully parse json.
 
 ## Deploy some VMs on each cloud provider
 * An example command that you can run for Azure: `./deploy_azure.sh -g jbreese-awesome`
 * An example command that you can run for GCP: `./deploy_gcp.sh -d jbreese-awesome`
 * An example command that you can run for AWS: `./deploy_aws.sh -s jbreese-awesome`
-* Read all about the specifics below for each of the commands
+* Read all about the specifics below for each of the commands (e.g. change default region)
 
 ## Gather the IP addresses of the clusters that you made:
 * You can run the `gather_ips.sh` and the appropriate switches to get the public and private IP addresses from the deployed VMs in the given cloud providers.
@@ -155,7 +156,7 @@ Options:
 
  Example:
 
- ./teardown.sh -r us-east-2 -s jbreese-awesome-aws -d jbreese-awesome-azure -g jbreese-awesome-gcp
+ ./teardown.sh -s jbreese-awesome-aws -d jbreese-awesome-azure -g jbreese-awesome-gcp
 ```
 
 ---------------------------------------------------
