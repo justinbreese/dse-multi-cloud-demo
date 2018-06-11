@@ -44,7 +44,7 @@ Again, choose your own adventure...
 104.42.168.14:172.16.0.4:azure:1
 104.42.173.219:172.16.0.4:azure:2
 ```
-* **Very important** Decide which VM you want to be acting as your OpsCenter node:
+* **Very important:** decide which VM you want to be acting as your OpsCenter node:
   * Make a note of the public IP address
   * Delete that entry from your `server-list` file - We don't want to make your OpsCenter VM a DSE node as well
 
@@ -53,7 +53,7 @@ It is time to setup your cluster using the `setup.py` script. Here is an example
 `python dse-multi-cloud-demo/setup.py -lcm 52.160.36.16 -u ubuntu -k keys/ubuntu -n dse-cluster -s dse-multi-cloud-demo/server-list`
 
 Let's break down the switches:
-* -lcm --> this is the public IP address of the server that you wish to designate as the DataStax OpsCenter Server; this will be the main server that all of the other nodes will be configured by. *Make sure that this entry is not in your server list file. We don't want to make your OpsCenter VM a DSE node as well*
+* -lcm --> this is the public IP address of the server that you wish to designate as the DataStax OpsCenter Server; this will be the main server that all of the other nodes will be configured by. **Make sure that this entry is not in your server list file. We don't want to make your OpsCenter VM a DSE node as well**
 * -u --> username that you'll use to log into all of the servers
 * -k --> location of the private key on your laptop
 * -n --> name of the dse cluster that you'd like to create

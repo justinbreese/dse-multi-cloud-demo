@@ -25,7 +25,7 @@ Feel free to use the key pair (`ubuntu` and `ubuntu.pub`) in this directory
 * Using the above example, I created deployments in each of Azure, GCP, and AWS:
 * `tee` out `./gather_ips.sh` to save everything into a nice and tidy file:
   `./gather_ips.sh -s jbreese-awesome-aws -d jbreese-awesome-azure -g jbreese-awesome-gcp | tee server-list`
-* **Very important** Decide which VM you want to be acting as your OpsCenter node:
+* **Very important:** decide which VM you want to be acting as your OpsCenter node:
     * Make a note of the public IP address
     * Delete that entry from your `server-list` file - we don't want to make your OpsCenter VM a DSE node as well
 
