@@ -10,7 +10,8 @@ Choose your own adventure: do it yourself or use some scripts that are in the re
 
 ## Go to a few of your favorite public cloud providers and create some VMs!
 * Make note of the public and private IP addresses of all of the VMs
-* Use the same public key on all of the servers and put the private key on your laptop; I've included a public and and private (`ubuntu` and `ubuntu.pub`) in the `iaas` directory.
+* Use the same public key on all of the servers and put the private key on your laptop
+* Use the same ssh key pair for all of the VMs
 * Use the same username on all of the servers
 * Make sure all of the DSE appropriate ports are open. For a list of all of the ports go to: https://docs.datastax.com/en/dse/6.0/dse-admin/datastax_enterprise/security/secFirewallPorts.html
 * If you don't want to open up the specific ports for DSE, then you can do the nuclear option and open all all of the following ports: 7000-65535
@@ -50,6 +51,7 @@ Again, choose your own adventure...
 
 # From your laptop, here is an example command to get everything setup command:
 It is time to setup your cluster using the `setup.py` script. Here is an example:
+
 `python dse-multi-cloud-demo/setup.py -lcm 52.160.36.16 -u ubuntu -k keys/ubuntu -n dse-cluster -s dse-multi-cloud-demo/server-list`
 
 Let's break down the switches:
