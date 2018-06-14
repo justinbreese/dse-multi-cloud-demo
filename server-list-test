@@ -1,0 +1,9 @@
+54.209.195.40:172.31.13.117:multicloud-aws:0
+54.242.46.229:172.31.15.89:multicloud-aws:1
+107.23.133.114:172.31.15.129:multicloud-aws:2
+137.135.83.248:10.0.0.5:multicloud-azure:0
+137.135.83.8:10.0.0.6:multicloud-azure:1
+137.135.80.67:10.0.0.7:multicloud-azure:2
+35.202.190.61:10.240.0.2:multicloud-gce:0
+35.232.255.154:10.240.0.3:multicloud-gce:1
+35.193.214.6:10.240.0.6:multicloud-gce:2

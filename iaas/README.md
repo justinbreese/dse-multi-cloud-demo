@@ -4,8 +4,6 @@ These scripts and templates deploy bare VMs (Ubuntu) in AWS, GCP, or Azure, gath
 
 All scripts understand `-h` for help and should be self documenting.
 
-Feel free to use the key pair (`ubuntu` and `ubuntu.pub`) in this directory
-
 # Install the CLIs for the cloud providers and jq
 * Make sure that you have installed the CLIs for whichever cloud providers that you want to use. I will be using Microsoft Azure, Amazon Web Services (AWS), and Google Cloud Platform (GCP) for this example
     * Instructions on how to install the CLI for Azure: https://docs.microsoft.com/en-us/cli/azure/install-azure-cli?view=azure-cli-latest
@@ -14,7 +12,13 @@ Feel free to use the key pair (`ubuntu` and `ubuntu.pub`) in this directory
 * After you've installed the CLIs, be sure to configure each one so that you can use them. Important: make sure that the default output for all of the CLIs is json. You do this during configuration.
 * Install jq: `sudo apt-get install jq` - you will need this for the scripts to successfully parse json.
 
+# Create a key pair that you can use for all VMs
+* Use an existing one or create a new one: `ssh-keygen -C "ubuntu"`
+* Choose your location to store the private and public keys
+
 # Deploy some VMs on each cloud provider
+* Make sure that you incorporate your key pair in the setup params for Azure and GCP.
+* Create the key pair within the AWS console (if you're using AWS) and reference it in the AWS params
 * An example command that you can run for Azure: `./deploy_azure.sh -g jbreese-awesome`
 * An example command that you can run for GCP: `./deploy_gcp.sh -d jbreese-awesome`
 * An example command that you can run for AWS: `./deploy_aws.sh -s jbreese-awesome`
