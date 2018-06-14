@@ -1,4 +1,3 @@
-
 # Overview
 These scripts and templates deploy bare VMs (Ubuntu) in AWS, GCP, or Azure, gather their public/private ips, and tear down the deployments. The number/type of VM can be changes in the `param.json` files for each cloud.
 
@@ -13,7 +12,7 @@ All scripts understand `-h` for help and should be self documenting.
 * Install jq: `sudo apt-get install jq` - you will need this for the scripts to successfully parse json.
 
 # Create a key pair that you can use for all VMs
-* `ssh-keygen -C "ubuntu"` <enter>
+* Use an existing one or create a new one: `ssh-keygen -C "ubuntu"`
 * Choose your location to store the private and public keys
 
 # Deploy some VMs on each cloud provider
