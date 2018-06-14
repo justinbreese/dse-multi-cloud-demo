@@ -1,0 +1,274 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "location": {
+      "type": "string"
+    },
+    "uniqueString": {
+      "type": "string"
+    },
+    "adminUsername": {
+      "type": "string"
+    },
+    "sshKeyData": {
+      "type": "string",
+      "metadata": {
+        "description": "SSH rsa public key file as a string."
+      }
+    },
+    "nodeCount": {
+      "type": "int"
+    },
+    "vmSize": {
+      "type": "string"
+    },
+    "vnetName": {
+      "type": "string"
+    },
+    "subnetName": {
+      "type": "string"
+    },
+    "namespace": {
+      "type": "string"
+    },
+    "publicIpOnNodes": {
+      "type": "string",
+      "allowedValues": [
+        "yes",
+        "no"]
+    }
+  },
+  "variables": {
+    "vmName": "[concat(parameters('namespace'), 'vm')]",
+    "vnetId": "[resourceId('Microsoft.Network/virtualNetworks', parameters('vnetName'))]",
+    "subnetId": "[concat(variables('vnetId'), '/subnets/', parameters('subnetName'))]",
+    "osSettings": {
+      "imageReference": {
+        "publisher": "datastax",
+        "offer": "datastax-enterprise",
+        "sku": "datastaxenterprise",
+        "version": "latest"
+      }
+    },
+    "sshKeyPath": "[concat('/home/',parameters('adminUsername'),'/.ssh/authorized_keys')]",
+    "faultDomainCountMap": {
+      "australiaeast": {
+          "MaximumPlatformFaultDomainCount": 2
+      },
+      "australiasoutheast": {
+          "MaximumPlatformFaultDomainCount": 2
+      },
+      "brazilsouth": {
+          "MaximumPlatformFaultDomainCount": 2
+      },
+      "canadacentral": {
+          "MaximumPlatformFaultDomainCount": 2
+      },
+      "canadaeast": {
+          "MaximumPlatformFaultDomainCount": 2
+      },
+      "centralindia": {
+          "MaximumPlatformFaultDomainCount": 2
+      },
+      "centralus": {
+          "MaximumPlatformFaultDomainCount": 3
+      },
+      "centraluseuap": {
+          "MaximumPlatformFaultDomainCount": 1
+      },
+      "eastasia": {
+          "MaximumPlatformFaultDomainCount": 2
+      },
+      "eastus": {
+          "MaximumPlatformFaultDomainCount": 3
+      },
+      "eastus2": {
+          "MaximumPlatformFaultDomainCount": 3
+      },
+      "eastus2euap": {
+          "MaximumPlatformFaultDomainCount": 2
+      },
+      "japaneast": {
+          "MaximumPlatformFaultDomainCount": 2
+      },
+      "japanwest": {
+          "MaximumPlatformFaultDomainCount": 2
+      },
+      "koreacentral": {
+          "MaximumPlatformFaultDomainCount": 2
+      },
+      "koreasouth": {
+          "MaximumPlatformFaultDomainCount": 2
+      },
+      "northcentralus": {
+          "MaximumPlatformFaultDomainCount": 3
+      },
+      "northeurope": {
+          "MaximumPlatformFaultDomainCount": 3
+      },
+      "southcentralus": {
+          "MaximumPlatformFaultDomainCount": 3
+      },
+      "southeastasia": {
+          "MaximumPlatformFaultDomainCount": 2
+      },
+      "southindia": {
+          "MaximumPlatformFaultDomainCount": 2
+      },
+      "uksouth": {
+          "MaximumPlatformFaultDomainCount": 2
+      },
+      "ukwest": {
+          "MaximumPlatformFaultDomainCount": 2
+      },
+      "usdodcentral": {
+          "MaximumPlatformFaultDomainCount": 2
+      },
+      "usdodeast": {
+          "MaximumPlatformFaultDomainCount": 2
+      },
+      "usgovarizona": {
+          "MaximumPlatformFaultDomainCount": 2
+      },
+      "usgovtexas": {
+          "MaximumPlatformFaultDomainCount": 2
+      },
+      "usgovvirginia": {
+          "MaximumPlatformFaultDomainCount": 2
+      },
+      "westcentralus": {
+          "MaximumPlatformFaultDomainCount": 2
+      },
+      "westeurope": {
+          "MaximumPlatformFaultDomainCount": 3
+      },
+      "westindia": {
+          "MaximumPlatformFaultDomainCount": 2
+      },
+      "westus": {
+          "MaximumPlatformFaultDomainCount": 3
+      },
+      "westus2": {
+          "MaximumPlatformFaultDomainCount": 2
+      }
+    }
+  },
+  "resources": [
+    {
+      "apiVersion": "2017-12-01",
+      "type": "Microsoft.Compute/availabilitySets",
+      "name": "[parameters('namespace')]",
+      "location": "[parameters('location')]",
+      "properties": {
+        "platformFaultDomainCount":"[variables('faultdomainCountMap')[tolower(replace(parameters('location'),' ',''))].MaximumPlatformFaultDomainCount]",
+        "platformUpdateDomainCount": 18
+      },
+      "sku": {
+        "name": "Aligned"
+      }
+    },
+    {
+      "apiVersion": "2017-11-01",
+      "type": "Microsoft.Network/publicIPAddresses",
+      "name": "[concat(parameters('namespace'), 'vm', copyindex())]",
+      "location": "[parameters('location')]",
+      "condition": "[equals(parameters('publicIpOnNodes'), 'yes')]",
+      "copy": {
+        "name": "[concat(parameters('namespace'), 'ipLoop')]",
+        "count": "[parameters('nodeCount')]"
+      },
+      "properties": {
+        "publicIPAllocationMethod": "Static",
+        "dnsSettings": {
+          "domainNameLabel": "[concat(parameters('namespace'), 'vm', copyIndex(), parameters('uniqueString'))]"
+        }
+      }
+    },
+    {
+      "apiVersion": "2017-11-01",
+      "type": "Microsoft.Network/networkInterfaces",
+      "name": "[concat(parameters('namespace'), 'vm', copyindex())]",
+      "location": "[parameters('location')]",
+      "copy": {
+        "name": "[concat(parameters('namespace'), 'nicLoop')]",
+        "count": "[parameters('nodeCount')]"
+      },
+      "dependsOn": [
+        "[concat('Microsoft.Network/publicIPAddresses/', parameters('namespace'), 'vm', copyindex())]"
+      ],
+      "properties": {
+        "ipConfigurations": [
+          {
+            "name": "ipconfig1",
+            "properties": {
+              "publicIPAddress": "[if(equals(parameters('publicIpOnNodes'), 'yes') , json(concat('{\"id\": \"', resourceId('Microsoft.Network/publicIPAddresses', concat(parameters('namespace'), 'vm', copyindex())),'\"}')), json('null'))]",
+              "privateIPAllocationMethod": "Dynamic",
+              "subnet": {
+                "id": "[variables('subnetId')]"
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "apiVersion": "2017-12-01",
+      "type": "Microsoft.Compute/virtualMachines",
+      "name": "[concat(parameters('namespace'), 'vm', copyindex())]",
+      "location": "[parameters('location')]",
+      "copy": {
+        "name": "[concat(parameters('namespace'), 'vmLoop')]",
+        "count": "[parameters('nodeCount')]"
+      },
+      "dependsOn": [
+        "[concat('Microsoft.Network/networkInterfaces/', parameters('namespace'), 'vm', copyindex())]",
+        "[concat('Microsoft.Compute/availabilitySets/', parameters('namespace'))]"
+      ],
+      "plan": {
+        "name": "[variables('osSettings').imageReference.sku]",
+        "publisher": "[variables('osSettings').imageReference.publisher]",
+        "product": "[variables('osSettings').imageReference.offer]"
+      },
+      "properties": {
+        "availabilitySet": {
+          "id": "[resourceId('Microsoft.Compute/availabilitySets', concat(parameters('namespace')))]"
+        },
+        "hardwareProfile": {
+          "vmSize": "[parameters('vmSize')]"
+        },
+        "osProfile": {
+          "computerName": "[concat(parameters('namespace'), 'vm', copyIndex())]",
+          "adminUsername": "[parameters('adminUsername')]",
+          "linuxConfiguration": {
+            "disablePasswordAuthentication": true,
+            "ssh": {
+              "publicKeys": [
+                {
+                  "path": "[variables('sshKeyPath')]",
+                  "keyData": "[parameters('sshKeyData')]"
+                }
+              ]
+            }
+          }
+        },
+        "storageProfile": {
+          "imageReference": "[variables('osSettings').imageReference]",
+          "osDisk": {
+            "createOption": "FromImage"
+          },
+          "dataDisks": []
+        },
+        "networkProfile": {
+          "networkInterfaces": [
+            {
+              "id": "[resourceId('Microsoft.Network/networkInterfaces',concat(parameters('namespace'), 'vm', copyindex()))]"
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "outputs": {
+  }
+}
