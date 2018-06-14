@@ -61,7 +61,7 @@ Let's break down the switches:
 
 The script could take a few minutes to deploy so be patient.
 
-## Gotchas and things to know
+# Gotchas and things to know
 * Yes, I am using public IP addresses. I realize that your security team would feel better using a VPC and private IP addresses, but this demo is all about being quick and dirty. Feel free to adjust this to fit your needs.
 * Make sure that Python is installed on all of the VMs
 

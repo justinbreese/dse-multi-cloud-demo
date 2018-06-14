@@ -17,11 +17,11 @@ All scripts understand `-h` for help and should be self documenting.
 * Choose your location to store the private and public keys
 
 # Deploy some VMs on each cloud provider
+* Make sure that you incorporate your key pair in the setup params for Azure and GCP.
+* Create the key pair within the AWS console (if you're using AWS) and reference it in the AWS params
 * An example command that you can run for Azure: `./deploy_azure.sh -g jbreese-awesome`
 * An example command that you can run for GCP: `./deploy_gcp.sh -d jbreese-awesome`
 * An example command that you can run for AWS: `./deploy_aws.sh -s jbreese-awesome`
-* Make sure that you incorporate your key pair in the setup params for Azure and GCP. 
-* Create the key pair within the AWS console (if you're using AWS) and reference it in the AWS params
 * Read all about the specifics below for each of the commands (e.g. change default region)
 
 # Gather the IP addresses of the clusters that you made:
