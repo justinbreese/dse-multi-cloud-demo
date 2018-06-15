@@ -1,7 +1,9 @@
 # dse-multi-cloud-demo
-Do you want a single cluster that can span multiple public clouds all while securing your data in the process? Also, I hope you mind if you don't have any downtime... with DataStax we make it really easy to be on-prem, in the cloud, hybrid, or even multi-cloud.
+What if I told you that you could have your data layer could be completely secured and span across several public cloud providers and on-premises (hybrid) at the same time? With DataStax we make it really easy to be on-prem, in the cloud, hybrid, or even multi-cloud.
 
 Multi-cloud is starting to be very important for customers. By leveraging multiple public clouds, they're able to maintain data portability as well as being able to shop around to find the best infrastructure price for their given workloads. DataStax Enterprise provides that level of portability that they would not have by just using one public cloud.
+
+You also have the ability to manage and develop on this multi/hybrid cloud through one single pane of glass with DataStax OpsCenter and DataStax Studio.
 
 Yes, it is possible. And yes, you can do it!
 

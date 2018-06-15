@@ -88,20 +88,15 @@ machine_credential_id = machine_credential_response['id']
 
 cluster_profile_response = do_post("config_profiles/",
     {"name": cluster_name,
-     "datastax-version": "6.0.0", #dse_ver,
+     "datastax-version": "6.0.0",
 	 'json': {'cassandra-yaml' : {
-                 'endpoint_snitch' : 'org.apache.cassandra.locator.GossipingPropertyFileSnitch',
-                  'client_encryption_options' : {
-                      'enabled' : True
-                  },
-                  'server_encryption_options' : {
-                      'internode_encryption' : 'all',
-                      'require_client_auth' : True,
-                      'require_endpoint_verification' : False
-                  }
+                  'client_encryption_options' : { 'enabled' : True },
+                  'server_encryption_options' : { 'internode_encryption' : 'all',
+							                      'require_client_auth' : True,
+							                      'require_endpoint_verification' : False
+                  								}
+				 				},
              },
-              'logback-xml': {'loggers': [{'name': 'com.thinkaurelius.thrift', 'level': 'INFO'}]},
-              'dse-yaml': {'back_pressure_threshold_per_core': 501}},
      "comment": 'LCM provisioned %s' % cluster_name})
 cluster_profile_id = cluster_profile_response['id']
 
