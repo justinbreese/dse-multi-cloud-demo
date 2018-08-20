@@ -116,8 +116,9 @@ machine_credential_id = machine_credential_response['id']
 
 cluster_profile_response = do_post("config_profiles/",
     {"name": cluster_name,
-     "datastax-version": "6.0.1",
+     "datastax-version": "6.0.2",
 	 'json': {'cassandra-yaml' : {
+	 			  'num_tokens' : 256,
                   'client_encryption_options' : { 'enabled' : True },
                   'server_encryption_options' : { 'internode_encryption' : 'all',
 							                      'require_client_auth' : True,
