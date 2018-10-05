@@ -38,7 +38,7 @@ repo_user = os.environ.get('academy_user').strip()
 repo_pass = os.environ.get('academy_pass').strip()
 download_token = os.environ.get('academy_token').strip()
 
-#SSH into the OpsCenter/LCM server, install the JDK, install OpsCenter, and then wait 45 seconds for everything to start up
+#SSH into the OpsCenter/LCM server, install the JDK, install OpsCenter
 bashCommand = 'ssh -o StrictHostKeyChecking=accept-new -i '+ ssh_key+ ' '+ username+'@'+server_ip+' \'sudo apt-get install -y python software-properties-common; \
 sudo apt-add-repository -y ppa:webupd8team/java; \
 sudo apt-get update; \
@@ -48,13 +48,41 @@ echo "deb https://'+repo_user+':'+download_token+'@debian.datastax.com/enterpris
 stable main" | sudo tee -a /etc/apt/sources.list.d/datastax.sources.list; \
 curl -L https://debian.datastax.com/debian/repo_key | sudo apt-key add - ; \
 sudo apt-get update; sudo apt-get install opscenter; sudo service opscenterd start;\
-sleep 45;\' 2>/dev/null'
+\' 2>/dev/null'
 
 output = subprocess.check_output(['bash','-c', bashCommand])
 
 base_url = 'http://%s:8888/api/v2/lcm/' % server_ip
 cassandra_default_password = os.environ.get('cassandra_default_password').strip()
 opscenter_session = os.environ.get('opscenter_session', '')
+
+# Wait for OpsCenter to finish starting up by polling the API until we get a
+# 20x response.
+
+# Works by attaching a custom retry mechanism to the requests session, this is
+# documented at:
+# http://urllib3.readthedocs.io/en/latest/reference/urllib3.util.html
+# https://www.peterbe.com/plog/best-practice-with-retries-with-requests
+#
+# This particular session waits a max around 4 minutes.
+# This affects only requests invoked via the custom-session, not requests
+# invoked via requests.post or requests.get, for example.
+#
+# By default session.get(base_url) will silently block until OpsCenter comes up.
+# This StackOverflow answer shows how to turn up the verbosity on third-party
+# loggers (inluding requests and retry) and send them to stdout, but it will
+# make the rest of script extremely verbose as well:
+# https://stackoverflow.com/a/14058475
+session = requests.Session()
+retry = requests.packages.urllib3.util.retry.Retry(
+    total=8,          # Max retry attempts
+    backoff_factor=1, # Sleeps for [ 1s, 2s, 4s, ... ]
+                      # Stops growing at 120 seconds
+)
+adapter = requests.adapters.HTTPAdapter(max_retries=retry)
+session.mount('http://', adapter)
+session.mount('https://', adapter)
+session.get(base_url)
 
 print str(sys.argv)
 
@@ -88,8 +116,9 @@ machine_credential_id = machine_credential_response['id']
 
 cluster_profile_response = do_post("config_profiles/",
     {"name": cluster_name,
-     "datastax-version": "6.0.0",
+     "datastax-version": "6.0.2",
 	 'json': {'cassandra-yaml' : {
+	 			  'num_tokens' : 256,
                   'client_encryption_options' : { 'enabled' : True },
                   'server_encryption_options' : { 'internode_encryption' : 'all',
 							                      'require_client_auth' : True,

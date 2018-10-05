@@ -3,7 +3,7 @@
     "value": "westus"
   },
   "nodeCount": {
-    "value": 4
+    "value": 3
   },
   "vmSize": {
     "value": "Standard_DS4_v2"
@@ -15,7 +15,7 @@
     "value": "ubuntu"
   },
   "sshKeyData": {
-    "value": "ssh-rsa <insert public key here>"
+    "value": "<paste ssh public key here>"
   },
   "publicIpOnNodes": {
     "value": "yes"
