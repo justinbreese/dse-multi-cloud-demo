@@ -12,6 +12,14 @@
     "ParameterValue": "us-west-2a,us-west-2b,us-west-2c"
   },
   {
+    "ParameterKey": "DataCenterSize",
+    "ParameterValue": "4"
+  },
+  {
+    "ParameterKey": "InstanceType",
+    "ParameterValue": "m4.large"
+  },
+  {
     "ParameterKey": "Subnets",
     "ParameterValue": "subnet-b5f6ead0,subnet-cbefa192,subnet-0982b37e"
   }

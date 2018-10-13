@@ -1,1 +1,1 @@
-cat raw | awk '{print $2 ":" $3 ":" $1}' | sed 's/awsdemo_node/AWS:/; s/azuredemo_node/Azure:/; s/gcedemo_node/GCP:/' > server-list-killr
+cat raw | awk '{print $2 ":" $3 ":" $1}' | sed 's/awsdemo_node/AWS:/; s/azuredemo_node/Azure:/; s/gcedemo_node/GCP:/' > server-list-new

@@ -15,7 +15,7 @@
     "value": "ubuntu"
   },
   "sshKeyData": {
-    "value": "<paste ssh public key here>"
+    "value": "<public SSH key here>"
   },
   "publicIpOnNodes": {
     "value": "yes"
