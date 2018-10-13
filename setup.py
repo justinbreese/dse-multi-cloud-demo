@@ -24,8 +24,10 @@ ap.add_argument("-n", "--cluster_name", required=True,
 	help="name of the cluster that you want to create")
 ap.add_argument("-s", "--server_list", required=True,
 	help="list of servers to be added to the new cluster")
-ap.add_argument("-u", "--user", required=True,
+ap.add_argument("-u", "--user", required=False,
 	help="username for the server")
+ap.add_argument("-p", "--phased", required=False, action='store_true',
+	help="install the first DC and then setup the config for the other DCs?")
 args = vars(ap.parse_args())
 
 server_ip = args["LCM_server_ip"]
@@ -33,6 +35,7 @@ ssh_key = args["ssh_key"]
 cluster_name = args["cluster_name"]
 server_list = args["server_list"]
 username = args["user"]
+phased_deploy = args["phased"]
 
 repo_user = os.environ.get('academy_user').strip()
 repo_pass = os.environ.get('academy_pass').strip()
@@ -105,7 +108,7 @@ repository_id = repository_response['id']
 with open(ssh_key, 'r') as myfile:
         privateKey=myfile.read()
 machine_credential_response = do_post("machine_credentials/",
-     {"name": "playground-multi-cloud",
+     {"name": cluster_name,
       "login-user": username,
       "become-mode": "sudo",
       "ssh-private-key": privateKey,
@@ -116,14 +119,14 @@ machine_credential_id = machine_credential_response['id']
 
 cluster_profile_response = do_post("config_profiles/",
     {"name": cluster_name,
-     "datastax-version": "6.0.2",
+     "datastax-version": "6.0.4",
 	 'json': {'cassandra-yaml' : {
 	 			  'num_tokens' : 256,
-                  'client_encryption_options' : { 'enabled' : True },
-                  'server_encryption_options' : { 'internode_encryption' : 'all',
-							                      'require_client_auth' : True,
-							                      'require_endpoint_verification' : False
-                  								}
+                 # 'client_encryption_options' : { 'enabled' : True },
+                 # 'server_encryption_options' : { 'internode_encryption' : 'all',
+				#			                      'require_client_auth' : True,
+				#			                      'require_endpoint_verification' : False
+                 # 								}
 				 				},
              },
      "comment": 'LCM provisioned %s' % cluster_name})
@@ -147,15 +150,19 @@ for host in server_list:
     data_centers.add(host.split(":")[2])
 
 data_center_ids = {}
+cnt = 0
 for data_center in data_centers:
     make_dc_response = do_post("datacenters/",
         {"name": data_center,
          "cluster-id": cluster_id,
          "solr-enabled": True,
          "spark-enabled": True,
-         "graph-enabled": True})
+         "graph-enabled": True}
+	)
     dc_id = make_dc_response['id']
     data_center_ids[data_center] = dc_id
+    if cnt == 0:
+		phase_dc_id = data_center_ids[data_center]
 
 for host in server_list:
     node_ip = host.split(":")[0]
@@ -172,15 +179,26 @@ for host in server_list:
          "datacenter-id": data_center_ids[data_center],
          "rack": "rack1"})
 
-# Request an install job to execute the installation and configuration of the
-# cluster. Until this point, we've been describing future state. Now LCM will
-# execute the changes necessary to achieve that state.
-install_job = do_post("actions/install",
-                     {"job-type":"install",
-                      "job-scope":"cluster",
-                      "resource-id":cluster_id,
-                      "continue-on-error":"false"})
-
+#If phased rollout is requested ``-p true` then only configure the DCs but don't install to all of them
+if phased_deploy is True:
+	print 'installing one DC'
+	install_job = do_post("actions/install",
+	                     {"job-type":"install",
+	                      "job-scope":"datacenter",
+	                      "resource-id": phase_dc_id,
+	                      "continue-on-error":"false"})
+	job_id = install_job['id']
+else:
+	print 'installing all DCs'
+	# Request an install job to execute the installation and configuration of the
+	# cluster. Until this point, we've been describing future state. Now LCM will
+	# execute the changes necessary to achieve that state.
+	install_job = do_post("actions/install",
+	                     {"job-type":"install",
+	                      "job-scope":"cluster",
+	                      "resource-id":cluster_id,
+	                      "continue-on-error":"false"})
+	job_id = install_job['id']
 print("http://%s:8888" % server_ip)
 #open up a new browser tab that shows LCM working
-webbrowser.open_new_tab('http://'+server_ip+':8888/opscenter/lcm.html')
+webbrowser.open_new_tab('http://'+server_ip+':8888/opscenter/lcm.html#/jobs/'+job_id)

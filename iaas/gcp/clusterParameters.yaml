@@ -12,4 +12,4 @@ resources:
     nodesPerZone: 3
     dataDiskType: pd-ssd
     diskSize: 60
-    sshKeyValue: "<paste ssh public key here>"
+    sshKeyValue: "<public ssh key here>"
