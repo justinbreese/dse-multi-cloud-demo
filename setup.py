@@ -122,11 +122,11 @@ cluster_profile_response = do_post("config_profiles/",
      "datastax-version": "6.0.4",
 	 'json': {'cassandra-yaml' : {
 	 			  'num_tokens' : 256,
-                 # 'client_encryption_options' : { 'enabled' : True },
-                 # 'server_encryption_options' : { 'internode_encryption' : 'all',
-				#			                      'require_client_auth' : True,
-				#			                      'require_endpoint_verification' : False
-                 # 								}
+                  'client_encryption_options' : { 'enabled' : True },
+                  'server_encryption_options' : { 'internode_encryption' : 'all',
+							                      'require_client_auth' : True,
+							                      'require_endpoint_verification' : False
+                  								}
 				 				},
              },
      "comment": 'LCM provisioned %s' % cluster_name})
