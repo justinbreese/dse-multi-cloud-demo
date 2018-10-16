@@ -16,9 +16,10 @@ Options:
                       default westus2
  -g resource-group  : name of resource-group to deploy,
                       default 'multi'
+-o                  : output file name to store the IP addresses
 ---------------------------------------------------"
 
-while getopts 'hl:g:' opt; do
+while getopts 'h:l:g:o:' opt; do
   case $opt in
     h) echo -e "$usage"
        exit 0
@@ -26,6 +27,8 @@ while getopts 'hl:g:' opt; do
     l) loc="$OPTARG"
     ;;
     g) rg="$OPTARG"
+    ;;
+    o) output="$OPTARG"
     ;;
     \?) echo "Invalid option -$OPTARG" >&2
         exit 1
@@ -38,12 +41,15 @@ rand=$(LC_ALL=C tr -cd '[:alnum:]' < /dev/urandom | tr -cd '[:lower:]' | fold -w
 az group create --name $rg --location $loc
 az group deployment create \
 --resource-group $rg \
---template-file ./azure/template-vnet.json \
---verbose
+--template-file ./azure/template-vnet.json #\
+#--verbose
 
 az group deployment create \
 --resource-group $rg \
 --template-file ./azure/nodes.json \
 --parameters @./azure/params.json \
---parameters '{"uniqueString": {"value": "'$rand'"}}' \
---verbose
+--parameters '{"uniqueString": {"value": "'$rand'"}}' #\
+#--verbose
+
+# gather the IP addresses and store them in the main directory file
+./gather_ips.sh -g $rg >> $output

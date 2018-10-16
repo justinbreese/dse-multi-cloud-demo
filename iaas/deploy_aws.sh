@@ -16,10 +16,10 @@ Options:
                       default us-west-2
  -s stack           : name of AWS CFn stack to deploy,
                       default 'multi'
-
+ -o                 : output file name to store the IP addresses
 ---------------------------------------------------"
 
-while getopts 'hr:s:' opt; do
+while getopts 'h:r:o:s:' opt; do
   case $opt in
     h) echo -e "$usage"
        exit 0
@@ -27,6 +27,8 @@ while getopts 'hr:s:' opt; do
     r) region="$OPTARG"
     ;;
     s) stackname="$OPTARG"
+    ;;
+    o) output="$OPTARG"
     ;;
     \?) echo "Invalid option -$OPTARG" >&2
         exit 1
@@ -45,3 +47,6 @@ aws cloudformation create-stack  \
 echo "Waiting for stack to complete..."
 sleep 30s #avoid fail?
 aws cloudformation wait stack-create-complete --stack-name $stackname
+
+# gather the IP addresses and store them in the main directory file
+./gather_ips.sh -s $stackname >> $output

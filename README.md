@@ -16,13 +16,13 @@ Choose your own adventure: do it yourself or use some scripts that are in the re
   * Either use an existing one or create a new one: `ssh-keygen -C "ubuntu"`
 * Use the same username on all of the servers (e.g. ubuntu)
 * Make sure all of the DSE appropriate ports are open. For a list of all of the ports go to: https://docs.datastax.com/en/dse/6.0/dse-admin/datastax_enterprise/security/secFirewallPorts.html
-* If you don't want to open up the specific ports for DSE, then you can do the nuclear option and open all all of the following ports: 7000-65535
+* If you don't want to open up the specific ports for DSE, then you can do the nuclear option and open all all of the following ports: 7000-65535; fine for demos, but not fit for production by any means
 
 ## Use the scripts in the repo
 * Check out the `iaas` directory in this repo for a full README on how this works
-* There is complete automation for Azure, GCP, and AWS
+* There is complete automation for provisioning the PaaS for Azure, GCP, and AWS
 
-## Set these environmental variables in your .bash_profile:
+# Set these environmental variables in your .bash_profile:
 ```
 export cassandra_default_password="blah"
 export academy_user="blah"
@@ -37,6 +37,7 @@ Again, choose your own adventure...
 * Otherwise, if you need to put your list together manually:
   * Create a generic text file and format your VMs like this: `public-ip:private-ip:dc-name:node-number` for example, I call it as server-list below:
 ```
+18.236.78.240:172.31.16.53:ops:0
 18.236.78.240:172.31.16.53:aws:0
 34.217.211.58:172.31.21.235:aws:1
 34.208.176.38:172.31.17.235:aws:2
@@ -61,6 +62,7 @@ Let's break down the switches:
 * -k --> location of the private key on your laptop
 * -n --> name of the dse cluster that you'd like to create
 * -s --> list of servers that you created in the previous step
+* -p --> optional. phased deployment will configure all DCs but will only install the first DC. You'll still be able to see the other DCs within LCM, but DSE is not installed. You just need `-p` for this flag and nothing else. To install the subsequent DCs: go into LCM, click on the cluster -> DC -> click on the ... and then `install`. This will kick off an install job for that DC.
 
 The script could take a few minutes to deploy so be patient.
 
@@ -74,3 +76,4 @@ The script could take a few minutes to deploy so be patient.
 * Wei Deng (weideng1)
 * Richard Lewis (Lewisr650)
 * Collin Poczatek (cpoczatek)
+* Russ Katz (russkatz)
