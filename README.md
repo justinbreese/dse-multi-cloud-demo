@@ -54,7 +54,7 @@ Again, choose your own adventure...
 
 # From your laptop, here is an example command to get everything setup command:
 It is time to setup your cluster using the `setup.py` script. Here is an example:
-`python dse-multi-cloud-demo/setup.py -u ubuntu -k keys/ubuntu -n dse-cluster -s dse-multi-cloud-demo/server-list`
+`python setup.py -u ubuntu -k keys/ubuntu -n dse-cluster -s server-list`
 
 Let's break down the switches:
 * -u --> username that you'll use to log into all of the servers
