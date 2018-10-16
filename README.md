@@ -54,15 +54,14 @@ Again, choose your own adventure...
 
 # From your laptop, here is an example command to get everything setup command:
 It is time to setup your cluster using the `setup.py` script. Here is an example:
-`python dse-multi-cloud-demo/setup.py -lcm 52.160.36.16 -u ubuntu -k keys/ubuntu -n dse-cluster -s dse-multi-cloud-demo/server-list`
+`python dse-multi-cloud-demo/setup.py -u ubuntu -k keys/ubuntu -n dse-cluster -s dse-multi-cloud-demo/server-list`
 
 Let's break down the switches:
-* -lcm --> this is the public IP address of the server that you wish to designate as the DataStax OpsCenter Server; this will be the main server that all of the other nodes will be configured by. **Make sure that this entry is not in your server list file. We don't want to make your OpsCenter VM a DSE node as well**
 * -u --> username that you'll use to log into all of the servers
 * -k --> location of the private key on your laptop
-* -n --> name of the dse cluster that you'd like to create
+* -n --> name of the DSE cluster that you'd like to create
 * -s --> list of servers that you created in the previous step
-* -p --> optional. phased deployment will configure all DCs but will only install the first DC. You'll still be able to see the other DCs within LCM, but DSE is not installed. You just need `-p` for this flag and nothing else. To install the subsequent DCs: go into LCM, click on the cluster -> DC -> click on the ... and then `install`. This will kick off an install job for that DC.
+* -p --> (optional) Phased deployment will configure all DCs but will only install the first DC. You'll still be able to see the other DCs within LCM, though. You just need `-p` for this flag and nothing else. To install the subsequent DCs: go into LCM, click on the cluster -> DC -> click on the ... and then `install`. This will kick off an install job for that DC.
 
 The script could take a few minutes to deploy so be patient.
 
