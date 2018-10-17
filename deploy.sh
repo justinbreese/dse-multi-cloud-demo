@@ -37,7 +37,7 @@ echo "Provisioning the VMs..."
 ./iaas/deploy_multiple.sh -d $deploy &&
 
 # check to see if phased install is requested, if so, then incorporate it and kickoff setup.py
-echo "Installing DataStax OpsCenter and installing the clusters. Please be patient. "
+echo "Installing DataStax OpsCenter and then setting up the cluster. A new browser tab will open to the installation job when it is ready. Please be patient. "
 if [ "$phased" = true ] ; then
   python setup.py -u $username -s $deploy -k $key -n $deploy -p
 else

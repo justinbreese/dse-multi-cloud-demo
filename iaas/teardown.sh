@@ -28,8 +28,8 @@ while getopts 'hr:g:s:d:k:' opt; do
     r) region="$OPTARG"
     ;;
     g) rg="$OPTARG"
-      echo "Deleting resource group $rg, not blocking"
-      az group delete -g $rg --no-wait --yes 
+      echo "Deleting resource group, $rg, not blocking"
+      az group delete -g $rg --no-wait --yes
     ;;
     s) stackname="$OPTARG"
       if [ -z "$region" ]; then
@@ -37,19 +37,19 @@ while getopts 'hr:g:s:d:k:' opt; do
         echo -e "Rerun script with '-r region' as 1st arg"
         exit 1
       fi
-      echo "Deleting CFn stack $stackname, not blocking"
+      echo "Deleting CFn stack, $stackname, not blocking"
       aws --region $region cloudformation delete-stack --stack-name $stackname
     ;;
     d) deploy="$OPTARG"
-      echo "Deleting GCP gcloud deployment: $deploy"
+      echo "Deleting GCP gcloud deployment, $deploy, not blocking"
       gcloud deployment-manager deployments delete $deploy -q --async
     ;;
     k) kill="$OPTARG"
-      echo "Deleting resource group $kill, not blocking"
+      echo "Deleting resource group, $kill, not blocking"
       az group delete -g $kill --no-wait --yes
-      echo "Deleting CFn stack $kill, not blocking"
+      echo "Deleting CFn stack, $kill, not blocking"
       aws --region $region cloudformation delete-stack --stack-name $kill
-      echo "Deleting GCP gcloud deployment: $kill"
+      echo "Deleting GCP gcloud deployment, $kill, not blocking"
       gcloud deployment-manager deployments delete $kill -q --async
     ;;
     \?) echo "Invalid option -$OPTARG" >&2
