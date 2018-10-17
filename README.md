@@ -23,7 +23,7 @@ If you are a masochist and want to do more of a manual method of provisioning VM
 # The easy way
 This is how you can get it up and running within a matter of minutes - completely automated!
 
-# Install the CLIs for the cloud providers and jq
+## Install the CLIs for the cloud providers and jq
 * Make sure that you have installed the CLIs for whichever cloud providers that you want to use. I will be using Microsoft Azure, Amazon Web Services (AWS), and Google Cloud Platform (GCP) for this example:
   * After you've installed the CLIs, be sure to configure each one so that you can use them.
   * Important: make sure that the default output for all of the CLIs is json. You do this during configuration.
@@ -32,7 +32,7 @@ This is how you can get it up and running within a matter of minutes - completel
   * Instructions on how to install the CLI for GCP: https://cloud.google.com/sdk/
 * Install jq: `brew install jq` - you will need this for the scripts to successfully parse json.
 
-# Create a key pair that you can use for all VMs
+## Create a key pair that you can use for all VMs
 * Use an existing one or create a new one: `ssh-keygen -C "ubuntu"`
 * Choose your location to store the private and public keys
 * Create that key pair to exist in AWS: EC2 --> Network & Security --> Key Pairs --> Create Key Pair
