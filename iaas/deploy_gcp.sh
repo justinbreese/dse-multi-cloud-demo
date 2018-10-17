@@ -9,7 +9,7 @@ deploy.sh [-h] [-d deployment-name]
 
 Options:
 
- -h                 : display this message and exit
+ -h       : display this message and exit
  -d		    : name of GCP gcloud deployment [required]
 
 --------------------------------------------------------------------------"
@@ -28,4 +28,7 @@ while getopts 'hd:' opt; do
 done
 
 echo "Deploying 'clusterParameters.yaml' in GCP gcloud deployment: $deploy"
-gcloud deployment-manager deployments create $deploy --config ./gcp/clusterParameters.yaml
+gcloud deployment-manager deployments create $deploy --config ./iaas/gcp/clusterParameters.yaml
+
+# gather the IP addresses and store them in the main directory file
+./iaas/gather_ips.sh -d $deploy >> $deploy

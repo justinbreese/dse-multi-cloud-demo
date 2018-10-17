@@ -1,9 +1,14 @@
 #!/usr/bin/env python
-# Example provisioning API usage script.  (C) DataStax, 2015.  All Rights Reserved
+# Example provisioning API usage script.  (C) DataStax, 2018.  All Rights Reserved
 #
-# Needs these OS environmental variables pre-defined: lcm_server, cassandra_default_password, opscenter_session (optional), dse_ver (optional), cluster_name (optional)
+# Needs these OS environmental variables pre-defined: lcm_server, cassandra_default_password, academy_user, academy_pass, and academy_token
 # command line parameter with node IP/DC in the following format:
 # public_IP:private_IP:DC_name:node_number
+#
+# This script will: install DataStax OpsCenter on a given VM, then - via LCM - setup the download repo, SSH credentials for contacting the other VMs,
+# create configuration profile, create a cluster, datacenter(s), nodes, and then run an install job on the given datacenter(s)
+
+# python ./setup.py -k key/ubuntu -s server-list -n awesome-demo -u ubuntu -v 3 -o aws
 
 import os
 import sys
@@ -16,7 +21,7 @@ import webbrowser
 
 # Configurable args
 ap = argparse.ArgumentParser()
-ap.add_argument("-lcm", "--LCM_server_ip", required=True,
+ap.add_argument("-lcm", "--LCM_server_ip", required=False,
 	help="public IP address of the LCM server")
 ap.add_argument("-k", "--ssh_key", required=True,
 	help="private key to be used")
@@ -24,18 +29,31 @@ ap.add_argument("-n", "--cluster_name", required=True,
 	help="name of the cluster that you want to create")
 ap.add_argument("-s", "--server_list", required=True,
 	help="list of servers to be added to the new cluster")
-ap.add_argument("-u", "--user", required=False,
+ap.add_argument("-u", "--user", required=True,
 	help="username for the server")
 ap.add_argument("-p", "--phased", required=False, action='store_true',
 	help="install the first DC and then setup the config for the other DCs?")
+
 args = vars(ap.parse_args())
 
-server_ip = args["LCM_server_ip"]
 ssh_key = args["ssh_key"]
 cluster_name = args["cluster_name"]
 server_list = args["server_list"]
 username = args["user"]
 phased_deploy = args["phased"]
+dse_ver = "6.0.4"
+
+
+# open up the server list and pull out the predefined OpsCenter VM
+with open(server_list, 'r') as server_list_file:
+    server_list = server_list_file.read().split()
+
+for host in server_list:
+    node_ip = host.split(":")[0]
+    data_center = host.split(":")[2]
+
+    if data_center in ["Ops", "ops", "OpsCenter", "opscenter", "Opscenter"]:
+		server_ip = node_ip
 
 repo_user = os.environ.get('academy_user').strip()
 repo_pass = os.environ.get('academy_pass').strip()
@@ -87,6 +105,7 @@ session.mount('http://', adapter)
 session.mount('https://', adapter)
 session.get(base_url)
 
+#list out all of the arguments that have been used for the command
 print str(sys.argv)
 
 def do_post(url, post_data):
@@ -97,6 +116,7 @@ def do_post(url, post_data):
     result_data = json.loads(result.text)
     return result_data
 
+# setup the repository for where you want to download DSE from
 repository_response = do_post("repositories/",
     {"name": "dse-public-repo",
         "username": repo_user,
@@ -104,7 +124,7 @@ repository_response = do_post("repositories/",
 
 repository_id = repository_response['id']
 
-# ssh private key example
+# setup the ssh credential section for LCM
 with open(ssh_key, 'r') as myfile:
         privateKey=myfile.read()
 machine_credential_response = do_post("machine_credentials/",
@@ -117,21 +137,37 @@ machine_credential_response = do_post("machine_credentials/",
 )
 machine_credential_id = machine_credential_response['id']
 
-cluster_profile_response = do_post("config_profiles/",
-    {"name": cluster_name,
-     "datastax-version": "6.0.4",
-	 'json': {'cassandra-yaml' : {
-	 			  'num_tokens' : 256,
-                  'client_encryption_options' : { 'enabled' : True },
-                  'server_encryption_options' : { 'internode_encryption' : 'all',
-							                      'require_client_auth' : True,
-							                      'require_endpoint_verification' : False
-                  								}
-				 				},
-             },
-     "comment": 'LCM provisioned %s' % cluster_name})
+# setup the config profile for LCM
+if phased_deploy is True:
+	cluster_profile_response = do_post("config_profiles/",
+	    {"name": cluster_name,
+	     "datastax-version": dse_ver,
+		 'json': {'cassandra-yaml' : {
+		 			  'num_tokens' : 256,
+					 				},
+					'dse-yaml' : {
+						'authentication_options' : {'enabled' : False }
+									},
+	             },
+	     "comment": 'LCM provisioned as %s' % cluster_name})
+else:
+	cluster_profile_response = do_post("config_profiles/",
+	    {"name": cluster_name,
+	     "datastax-version": dse_ver,
+		 'json': {'cassandra-yaml' : {
+		 			  'num_tokens' : 256,
+	                  'client_encryption_options' : { 'enabled' : True },
+	                 'server_encryption_options' : { 'internode_encryption' : 'all',
+								                      'require_client_auth' : True,
+								                      'require_endpoint_verification' : False
+	                 								}
+					 				},
+	             },
+	     "comment": 'LCM provisioned as %s' % cluster_name})
+
 cluster_profile_id = cluster_profile_response['id']
 
+# setup the cluster with the recently created config profile
 make_cluster_response = do_post("clusters/",
     {"name": cluster_name,
      "repository-id": repository_id,
@@ -143,55 +179,62 @@ cluster_id = make_cluster_response['id']
 
 data_centers = set()
 
+'''
+# open up the server list (provided by -s blah) within LCM and start creating the mapping of DCs and nodes
 with open(server_list, 'r') as server_list_file:
     server_list = server_list_file.read().split()
-
+'''
 for host in server_list:
     data_centers.add(host.split(":")[2])
 
+# create the DCs for the recently created cluster
 data_center_ids = {}
 cnt = 0
 for data_center in data_centers:
-    make_dc_response = do_post("datacenters/",
-        {"name": data_center,
-         "cluster-id": cluster_id,
-         "solr-enabled": True,
-         "spark-enabled": True,
-         "graph-enabled": True}
-	)
-    dc_id = make_dc_response['id']
-    data_center_ids[data_center] = dc_id
-    if cnt == 0:
-		phase_dc_id = data_center_ids[data_center]
+	if data_center not in ["Ops", "ops", "OpsCenter", "opscenter", "Opscenter"]:
+		make_dc_response = do_post("datacenters/",
+	        {"name": data_center,
+	         "cluster-id": cluster_id,
+	         "solr-enabled": True,
+	         "spark-enabled": True,
+	         "graph-enabled": True}
+			 )
+		dc_id = make_dc_response['id']
+		data_center_ids[data_center] = dc_id
+		#get the first datacenter id so we can use it for the phased install
+		if cnt == 0:
+			phase_dc_id = data_center_ids[data_center]
 
+# create the nodes for the recently created DCs
 for host in server_list:
-    node_ip = host.split(":")[0]
-    private_ip = host.split(":")[1]
-    data_center = host.split(":")[2]
-    node_idx = host.split(":")[3]
-    make_node_response = do_post("nodes/",
-        {"name": "node" + str(node_idx) + "_" + node_ip,
-         "listen-address": private_ip,
-         "native-transport-address": "0.0.0.0",
-	     "broadcast-address": node_ip,
-         "native-transport-broadcast-address": node_ip,
-         "ssh-management-address": node_ip,
-         "datacenter-id": data_center_ids[data_center],
-         "rack": "rack1"})
+	node_ip = host.split(":")[0]
+	private_ip = host.split(":")[1]
+	data_center = host.split(":")[2]
+	node_idx = host.split(":")[3]
+	if data_center not in ["Ops", "ops", "OpsCenter", "opscenter", "Opscenter"]:
+		make_node_response = do_post("nodes/",
+	        {"name": "node" + str(node_idx) + "_" + node_ip,
+	         "listen-address": private_ip,
+	         "native-transport-address": "0.0.0.0",
+		     "broadcast-address": node_ip,
+	         "native-transport-broadcast-address": node_ip,
+	         "ssh-management-address": node_ip,
+	         "datacenter-id": data_center_ids[data_center],
+	         "rack": "rack1"})
 
-#If phased rollout is requested ``-p true` then only configure the DCs but don't install to all of them
+# If phased install is requested ``-p` then configure all of the DCs but only install DSE on the first DC
 if phased_deploy is True:
-	print 'installing one DC'
 	install_job = do_post("actions/install",
 	                     {"job-type":"install",
 	                      "job-scope":"datacenter",
 	                      "resource-id": phase_dc_id,
 	                      "continue-on-error":"false"})
 	job_id = install_job['id']
+
+	# TBD: wait for the job to be done and then run some scripts to alter the system and OpsC keyspaces, add new username, etc.?
 else:
-	print 'installing all DCs'
 	# Request an install job to execute the installation and configuration of the
-	# cluster. Until this point, we've been describing future state. Now LCM will
+	# cluster. Until this point, we've been describing desired state. Now LCM will
 	# execute the changes necessary to achieve that state.
 	install_job = do_post("actions/install",
 	                     {"job-type":"install",
@@ -199,6 +242,7 @@ else:
 	                      "resource-id":cluster_id,
 	                      "continue-on-error":"false"})
 	job_id = install_job['id']
-print("http://%s:8888" % server_ip)
-#open up a new browser tab that shows LCM working
+print("DataStax OpsCenter can be found at: http://%s:8888" % server_ip)
+
+# open up a new browser tab that shows the deployment job that you just started
 webbrowser.open_new_tab('http://'+server_ip+':8888/opscenter/lcm.html#/jobs/'+job_id)

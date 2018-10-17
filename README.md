@@ -1,28 +1,13 @@
 # dse-multi-cloud-demo
-What if I told you that you could have your data layer could be completely secured and span across several public cloud providers and on-premises (hybrid) at the same time? With DataStax we make it really easy to be on-prem, in the cloud, hybrid, or even multi-cloud.
+What if I told you that you could have your data layer could be completely secured and span across several public cloud providers and on-premises (hybrid) at the same time? With DataStax Enterprise we make it really easy to be on-prem, in the cloud, hybrid, or even multi-cloud.
 
-Multi-cloud is starting to be very important for customers. By leveraging multiple public clouds, they're able to maintain data portability as well as being able to shop around to find the best infrastructure price for their given workloads. DataStax Enterprise provides that level of portability that they would not have by just using one public cloud.
+Multi-cloud is starting to be very important for customers. By leveraging multiple public clouds, they're able to maintain data portability as well as being able to shop around to find the best infrastructure price for their given workloads. DataStax Enterprise provides that level of portability that they would not have by just using one public cloud provider.
 
 You also have the ability to manage and develop on this multi/hybrid cloud through one single pane of glass with DataStax OpsCenter and DataStax Studio.
 
 Yes, it is possible. And yes, you can do it!
 
-# Create your VMs
-Choose your own adventure: do it yourself or use some scripts that are in the repo.
-
-## Go to a few of your favorite public cloud providers and create some VMs!
-* Make note of the public and private IP addresses of all of the VMs
-* Use the same public key on all of the servers and put the private key on your laptop;
-  * Either use an existing one or create a new one: `ssh-keygen -C "ubuntu"`
-* Use the same username on all of the servers (e.g. ubuntu)
-* Make sure all of the DSE appropriate ports are open. For a list of all of the ports go to: https://docs.datastax.com/en/dse/6.0/dse-admin/datastax_enterprise/security/secFirewallPorts.html
-* If you don't want to open up the specific ports for DSE, then you can do the nuclear option and open all all of the following ports: 7000-65535
-
-## Use the scripts in the repo
-* Check out the `iaas` directory in this repo for a full README on how this works
-* There is complete automation for Azure, GCP, and AWS
-
-## Set these environmental variables in your .bash_profile:
+# Set these environmental variables in your .bash_profile:
 ```
 export cassandra_default_password="blah"
 export academy_user="blah"
@@ -31,36 +16,39 @@ export academy_token="blah"
 ```
 Be sure to replace `blah` with your credentials. If you don't have credentials for DataStax Academy, then go and sign up for it at http://academy.datastax.com - it's free!  Be sure to create a download key (token) for your downloads too.
 
-# Create a text file that has your different VMs that you want in the cluster:
-Again, choose your own adventure...
-* If you're leveraging the scripts in the `iaas` folder to create your infrastructure, then you probably already put your list together via the `gather_ips.sh` script. If you already have your list, then skip the rest of this section. If you do not have your list yet, then go back to the iaas/README.md and use revisit the `gather_ips.sh` section.
-* Otherwise, if you need to put your list together manually:
-  * Create a generic text file and format your VMs like this: `public-ip:private-ip:dc-name:node-number` for example, I call it as server-list below:
-```
-18.236.78.240:172.31.16.53:aws:0
-34.217.211.58:172.31.21.235:aws:1
-34.208.176.38:172.31.17.235:aws:2
-35.224.38.177:10.128.0.2:gcp:0
-35.193.235.66:10.128.0.3:gcp:1
-35.192.167.240:10.128.0.4:gcp:2
-104.42.173.94:172.16.0.4:azure:0
-104.42.168.14:172.16.0.4:azure:1
-104.42.173.219:172.16.0.4:azure:2
-```
-* **Very important:** decide which VM you want to be acting as your OpsCenter node:
-  * Make a note of the public IP address
-  * Delete that entry from your `server-list` file - We don't want to make your OpsCenter VM a DSE node as well
+# Let's get started!
+Now that you've set some environment variables, you can choose more of a manual installation or an automated install. Choose below.
 
-# From your laptop, here is an example command to get everything setup command:
-It is time to setup your cluster using the `setup.py` script. Here is an example:
-`python dse-multi-cloud-demo/setup.py -lcm 52.160.36.16 -u ubuntu -k keys/ubuntu -n dse-cluster -s dse-multi-cloud-demo/server-list`
+# The more manual way - manual install
+If you are a masochist and want to do more of a manual method of provisioning VMs, gathering IP addresses, and running the setup then check out `MANUAL-METHOD.md` for more instructions.
+
+# The easy way - automated install
+This is how you can get it up and running within a matter of minutes - completely automated!
+
+## Install the CLIs for the cloud providers and jq
+* Make sure that you have installed the CLIs for whichever cloud providers that you want to use. I will be using Microsoft Azure, Amazon Web Services (AWS), and Google Cloud Platform (GCP) for this example:
+  * After you've installed the CLIs, be sure to configure each one so that you can use them.
+  * Important: make sure that the default output for all of the CLIs is json. You do this during configuration.
+  * Instructions on how to install the CLI for Azure: https://docs.microsoft.com/en-us/cli/azure/install-azure-cli?view=azure-cli-latest
+  * Instructions on how to install the CLI for AWS: https://docs.aws.amazon.com/cli/latest/userguide/installing.html
+  * Instructions on how to install the CLI for GCP: https://cloud.google.com/sdk/
+* Install jq: `brew install jq` - you will need this for the scripts to successfully parse json.
+
+## Create a key pair that you can use for all VMs
+* Use an existing one or create a new one: `ssh-keygen -C "ubuntu"`
+* Choose your location to store the private and public keys
+* Create that key pair to exist in AWS: EC2 --> Network & Security --> Key Pairs --> Create Key Pair
+  * Update `jbreese-multicloud-ubuntu` in: `./aws/params.json` --> `"ParameterKey": "KeyName"` --> `"ParameterValue": "jbreese-multicloud-ubuntu"` to be what you named your AWS key pair to be
+
+## From your laptop, here is an example command to get everything setup command:
+It is time to setup your cluster using the `deploy.sh` script. Here is an example:
+`/deploy.sh -d jbreese-test -k ../keys/ubuntu -u ubuntu -p`
 
 Let's break down the switches:
-* -lcm --> this is the public IP address of the server that you wish to designate as the DataStax OpsCenter Server; this will be the main server that all of the other nodes will be configured by. **Make sure that this entry is not in your server list file. We don't want to make your OpsCenter VM a DSE node as well**
-* -u --> username that you'll use to log into all of the servers
-* -k --> location of the private key on your laptop
-* -n --> name of the dse cluster that you'd like to create
-* -s --> list of servers that you created in the previous step
+* -d --> Argument needed: name of the DSE cluster and cloud deployments that you'd like to create (required) (e.g. jbreese-test)
+* -k --> Argument needed: file of the private key on your laptop (required) (e.g. ../keys/ubuntu)
+* -u --> Argument needed: username that you'll use to log into all of the servers (required) (e.g. ubuntu)
+* -p --> Flag only: phased deployment will configure all DCs but will only install the first DC. You'll still be able to see the other DCs within LCM, though. You just need `-p` for this flag and nothing else. To install the subsequent DCs: go into LCM, click on the cluster -> DC -> click on the ... and then `install`. This will kick off an install job for that DC (optional) (e.g. -p)
 
 The script could take a few minutes to deploy so be patient.
 
@@ -74,3 +62,4 @@ The script could take a few minutes to deploy so be patient.
 * Wei Deng (weideng1)
 * Richard Lewis (Lewisr650)
 * Collin Poczatek (cpoczatek)
+* Russ Katz (russkatz)

@@ -33,17 +33,20 @@ while getopts 'hl:g:' opt; do
   esac
 done
 
+echo "Deploying 'params.json' in Azure deployment: $rg"
+
 rand=$(LC_ALL=C tr -cd '[:alnum:]' < /dev/urandom | tr -cd '[:lower:]' | fold -w10 | head -n1)
 
 az group create --name $rg --location $loc
 az group deployment create \
 --resource-group $rg \
---template-file ./azure/template-vnet.json \
---verbose
+--template-file ./iaas/azure/template-vnet.json 
 
 az group deployment create \
 --resource-group $rg \
---template-file ./azure/nodes.json \
---parameters @./azure/params.json \
---parameters '{"uniqueString": {"value": "'$rand'"}}' \
---verbose
+--template-file ./iaas/azure/nodes.json \
+--parameters @./iaas/azure/params.json \
+--parameters '{"uniqueString": {"value": "'$rand'"}}'
+
+# gather the IP addresses and store them in the main directory file
+./iaas/gather_ips.sh -g $rg >> $rg

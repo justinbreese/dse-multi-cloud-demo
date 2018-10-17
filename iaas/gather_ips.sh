@@ -16,11 +16,12 @@ Options:
  -s stack            : name of AWS CFn stack to gather node ips from
  -g resource-group   : name of Azure resource group to gather node ips from
  -d deployment-name  : name of GCP gcloud deployment to gather node ips from
+ -a                  : flag for the automated process. If this is set then node0 in the AWS DC will get renamed to Ops
 
 ---------------------------------------------------"
 region='us-west-2' #default region
 
-while getopts 'hr:g:s:d:' opt; do
+while getopts 'hr:g:s:d:a' opt; do
   case $opt in
     h) echo -e "$usage"
        exit 0
@@ -41,6 +42,8 @@ while getopts 'hr:g:s:d:' opt; do
       done
       #exit 0
     ;;
+    a) automated=true
+    ;;
     s) stackname="$OPTARG"
       if [ -z "$region" ]; then
         echo -e "'region' is unset, can't continue..."
@@ -54,10 +57,18 @@ while getopts 'hr:g:s:d:' opt; do
        jq ' .AutoScalingGroups[0] | .Instances[].InstanceId ' | tr "\n" " " | tr -d '"')
        cnt=0
        for i in $instances; do
-         pubip=$(aws --region $region ec2 describe-instances --instance-ids $i | jq ' .Reservations[].Instances[].PublicIpAddress ' | tr -d '"')
-         privip=$(aws --region $region ec2 describe-instances --instance-ids $i | jq ' .Reservations[].Instances[].PrivateIpAddress ' | tr -d '"')
-         echo $pubip':'$privip':AWS:'$cnt
-         cnt=$((cnt+1))
+         if [ $cnt = 0 ] && [ "$automated" = true ]
+         then
+           pubip=$(aws --region $region ec2 describe-instances --instance-ids $i | jq ' .Reservations[].Instances[].PublicIpAddress ' | tr -d '"')
+           privip=$(aws --region $region ec2 describe-instances --instance-ids $i | jq ' .Reservations[].Instances[].PrivateIpAddress ' | tr -d '"')
+           echo $pubip':'$privip':Ops:'$cnt
+           cnt=$((cnt+1))
+         else
+           pubip=$(aws --region $region ec2 describe-instances --instance-ids $i | jq ' .Reservations[].Instances[].PublicIpAddress ' | tr -d '"')
+           privip=$(aws --region $region ec2 describe-instances --instance-ids $i | jq ' .Reservations[].Instances[].PrivateIpAddress ' | tr -d '"')
+           echo $pubip':'$privip':AWS:'$cnt
+           cnt=$((cnt+1))
+         fi
        done
        #exit 0
     ;;
