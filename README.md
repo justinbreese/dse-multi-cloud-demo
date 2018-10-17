@@ -36,7 +36,7 @@ This is how you can get it up and running within a matter of minutes - completel
 * Use an existing one or create a new one: `ssh-keygen -C "ubuntu"`
 * Choose your location to store the private and public keys
 * Create that key pair to exist in AWS: EC2 --> Network & Security --> Key Pairs --> Create Key Pair
-  * Update `jbreese-multicloud-ubuntu` in: ./aws/params.json` --> `"ParameterKey": "KeyName"` --> ``"ParameterValue": "jbreese-multicloud-ubuntu"` to be what you named your AWS key pair to be
+  * Update `jbreese-multicloud-ubuntu` in: `./aws/params.json` --> `"ParameterKey": "KeyName"` --> `"ParameterValue": "jbreese-multicloud-ubuntu"` to be what you named your AWS key pair to be
 
 ## From your laptop, here is an example command to get everything setup command:
 It is time to setup your cluster using the `deploy.sh` script. Here is an example:
