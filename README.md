@@ -18,10 +18,10 @@ export academy_token="blah"
 Be sure to replace `blah` with your credentials. If you don't have credentials for DataStax Academy, then go and sign up for it at http://academy.datastax.com - it's free!  Be sure to create a download key (token) for your downloads too.
 
 # The more manual way
-If you are a masochist and want to do more of a manual method of provisioning VMs, gathering IP addresses, and running the setup then check out `MANUAL-METHOD.md` for more instructions
+If you are a masochist and want to do more of a manual method of provisioning VMs, gathering IP addresses, and running the setup then check out `MANUAL-METHOD.md` for more instructions.
 
 # The easy way
-This is how you can get it up and running within a matter of minutes - completely automated
+This is how you can get it up and running within a matter of minutes - completely automated!
 
 # Install the CLIs for the cloud providers and jq
 * Make sure that you have installed the CLIs for whichever cloud providers that you want to use. I will be using Microsoft Azure, Amazon Web Services (AWS), and Google Cloud Platform (GCP) for this example:
