@@ -9,11 +9,13 @@ All scripts understand `-h` for help and should be self documenting.
     * Instructions on how to install the CLI for AWS: https://docs.aws.amazon.com/cli/latest/userguide/installing.html
     * Instructions on how to install the CLI for GCP: https://cloud.google.com/sdk/
 * After you've installed the CLIs, be sure to configure each one so that you can use them. Important: make sure that the default output for all of the CLIs is json. You do this during configuration.
-* Install jq: `sudo apt-get install jq` - you will need this for the scripts to successfully parse json.
+* Install jq: `brew install jq` - you will need this for the scripts to successfully parse json.
 
 # Create a key pair that you can use for all VMs
 * Use an existing one or create a new one: `ssh-keygen -C "ubuntu"`
 * Choose your location to store the private and public keys
+* Create that key pair to exist in AWS: EC2 --> Network & Security --> Key Pairs --> Create Key Pair
+  * Update `jbreese-multicloud-ubuntu` in: ./aws/params.json` --> `"ParameterKey": "KeyName"` --> ``"ParameterValue": "jbreese-multicloud-ubuntu"` to be what you named your AWS key pair to be
 
 # Deploy some VMs on each cloud provider and gather the IP addresses and configurations
 * Make sure that you incorporate your key pair in the setup params for Azure and GCP.

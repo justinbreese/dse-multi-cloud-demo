@@ -8,6 +8,8 @@
 # This script will: install DataStax OpsCenter on a given VM, then - via LCM - setup the download repo, SSH credentials for contacting the other VMs,
 # create configuration profile, create a cluster, datacenter(s), nodes, and then run an install job on the given datacenter(s)
 
+# python ./setup.py -k key/ubuntu -s server-list -n awesome-demo -u ubuntu -v 3 -o aws
+
 import os
 import sys
 import requests
@@ -31,6 +33,7 @@ ap.add_argument("-u", "--user", required=True,
 	help="username for the server")
 ap.add_argument("-p", "--phased", required=False, action='store_true',
 	help="install the first DC and then setup the config for the other DCs?")
+
 args = vars(ap.parse_args())
 
 ssh_key = args["ssh_key"]
@@ -41,6 +44,7 @@ phased_deploy = args["phased"]
 dse_ver = "6.0.4"
 
 
+# open up the server list and pull out the predefined OpsCenter VM
 with open(server_list, 'r') as server_list_file:
     server_list = server_list_file.read().split()
 
@@ -65,7 +69,7 @@ echo "deb https://'+repo_user+':'+download_token+'@debian.datastax.com/enterpris
 stable main" | sudo tee -a /etc/apt/sources.list.d/datastax.sources.list; \
 curl -L https://debian.datastax.com/debian/repo_key | sudo apt-key add - ; \
 sudo apt-get update; sudo apt-get install opscenter; sudo service opscenterd start;\
-\' ' #2>/dev/null'
+\' 2>/dev/null'
 
 output = subprocess.check_output(['bash','-c', bashCommand])
 

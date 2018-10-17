@@ -16,10 +16,9 @@ Options:
                       default westus2
  -g resource-group  : name of resource-group to deploy,
                       default 'multi'
--o                  : output file name to store the IP addresses
 ---------------------------------------------------"
 
-while getopts 'h:l:g:o:' opt; do
+while getopts 'hl:g:' opt; do
   case $opt in
     h) echo -e "$usage"
        exit 0
@@ -28,28 +27,26 @@ while getopts 'h:l:g:o:' opt; do
     ;;
     g) rg="$OPTARG"
     ;;
-    o) output="$OPTARG"
-    ;;
     \?) echo "Invalid option -$OPTARG" >&2
         exit 1
     ;;
   esac
 done
 
+echo "Deploying 'params.json' in Azure deployment: $rg"
+
 rand=$(LC_ALL=C tr -cd '[:alnum:]' < /dev/urandom | tr -cd '[:lower:]' | fold -w10 | head -n1)
 
 az group create --name $rg --location $loc
 az group deployment create \
 --resource-group $rg \
---template-file ./azure/template-vnet.json #\
-#--verbose
+--template-file ./iaas/azure/template-vnet.json 
 
 az group deployment create \
 --resource-group $rg \
---template-file ./azure/nodes.json \
---parameters @./azure/params.json \
---parameters '{"uniqueString": {"value": "'$rand'"}}' #\
-#--verbose
+--template-file ./iaas/azure/nodes.json \
+--parameters @./iaas/azure/params.json \
+--parameters '{"uniqueString": {"value": "'$rand'"}}'
 
 # gather the IP addresses and store them in the main directory file
-./gather_ips.sh -g $rg >> $output
+./iaas/gather_ips.sh -g $rg >> $rg

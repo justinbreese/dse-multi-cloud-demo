@@ -16,10 +16,10 @@ Options:
                       default us-west-2
  -s stack           : name of AWS CFn stack to deploy,
                       default 'multi'
- -o                 : output file name to store the IP addresses
+ -a                 : automated install
 ---------------------------------------------------"
 
-while getopts 'h:r:o:s:' opt; do
+while getopts 'hr:s:a' opt; do
   case $opt in
     h) echo -e "$usage"
        exit 0
@@ -28,7 +28,7 @@ while getopts 'h:r:o:s:' opt; do
     ;;
     s) stackname="$OPTARG"
     ;;
-    o) output="$OPTARG"
+    a) automated=true
     ;;
     \?) echo "Invalid option -$OPTARG" >&2
         exit 1
@@ -42,11 +42,16 @@ aws cloudformation create-stack  \
 --stack-name $stackname  \
 --disable-rollback  \
 --capabilities CAPABILITY_IAM  \
---template-body file://$(pwd)/aws/datacenter.template  \
---parameters file://$(pwd)/aws/params.json
+--template-body file://$(pwd)/iaas/aws/datacenter.template  \
+--parameters file://$(pwd)/iaas/aws/params.json
 echo "Waiting for stack to complete..."
 sleep 30s #avoid fail?
 aws cloudformation wait stack-create-complete --stack-name $stackname
 
 # gather the IP addresses and store them in the main directory file
-./gather_ips.sh -s $stackname >> $output
+# check to see if you are doing the automated process versus the manual process
+if [ "$automated" = true ] ; then
+  ./iaas/gather_ips.sh -a -s $stackname ->> $stackname
+else
+  ./iaas/gather_ips.sh -s $stackname ->> $stackname
+fi

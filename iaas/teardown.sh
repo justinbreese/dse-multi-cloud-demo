@@ -15,11 +15,12 @@ Options:
  -s stack           : name of AWS CFn stack to delete
  -g resource-group  : name of Azure resource group to delete
  -d deployment-name : name of GCP gcloud deployment to delete
+ -k deployment names: deletes the same deployment in all three clouds at once (e.g. jbreese-test is the same name used in all three clouds so you can delete them all at once)
 
 ---------------------------------------------------"
 region='us-west-2' #default region
 
-while getopts 'hr:g:s:d:' opt; do
+while getopts 'hr:g:s:d:k:' opt; do
   case $opt in
     h) echo -e "$usage"
        exit 0
@@ -28,7 +29,7 @@ while getopts 'hr:g:s:d:' opt; do
     ;;
     g) rg="$OPTARG"
       echo "Deleting resource group $rg, not blocking"
-      az group delete -g $rg --no-wait --yes
+      az group delete -g $rg --no-wait --yes 
     ;;
     s) stackname="$OPTARG"
       if [ -z "$region" ]; then
@@ -41,7 +42,15 @@ while getopts 'hr:g:s:d:' opt; do
     ;;
     d) deploy="$OPTARG"
       echo "Deleting GCP gcloud deployment: $deploy"
-      gcloud deployment-manager deployments delete $deploy -q
+      gcloud deployment-manager deployments delete $deploy -q --async
+    ;;
+    k) kill="$OPTARG"
+      echo "Deleting resource group $kill, not blocking"
+      az group delete -g $kill --no-wait --yes
+      echo "Deleting CFn stack $kill, not blocking"
+      aws --region $region cloudformation delete-stack --stack-name $kill
+      echo "Deleting GCP gcloud deployment: $kill"
+      gcloud deployment-manager deployments delete $kill -q --async
     ;;
     \?) echo "Invalid option -$OPTARG" >&2
         exit 1
