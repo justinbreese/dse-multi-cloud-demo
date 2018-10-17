@@ -1,13 +1,12 @@
 # dse-multi-cloud-demo
-What if I told you that you could have your data layer could be completely secured and span across several public cloud providers and on-premises (hybrid) at the same time? With DataStax we make it really easy to be on-prem, in the cloud, hybrid, or even multi-cloud.
+What if I told you that you could have your data layer could be completely secured and span across several public cloud providers and on-premises (hybrid) at the same time? With DataStax Enterprise we make it really easy to be on-prem, in the cloud, hybrid, or even multi-cloud.
 
-Multi-cloud is starting to be very important for customers. By leveraging multiple public clouds, they're able to maintain data portability as well as being able to shop around to find the best infrastructure price for their given workloads. DataStax Enterprise provides that level of portability that they would not have by just using one public cloud.
+Multi-cloud is starting to be very important for customers. By leveraging multiple public clouds, they're able to maintain data portability as well as being able to shop around to find the best infrastructure price for their given workloads. DataStax Enterprise provides that level of portability that they would not have by just using one public cloud provider.
 
 You also have the ability to manage and develop on this multi/hybrid cloud through one single pane of glass with DataStax OpsCenter and DataStax Studio.
 
 Yes, it is possible. And yes, you can do it!
 
-# The basics
 # Set these environmental variables in your .bash_profile:
 ```
 export cassandra_default_password="blah"
@@ -17,10 +16,13 @@ export academy_token="blah"
 ```
 Be sure to replace `blah` with your credentials. If you don't have credentials for DataStax Academy, then go and sign up for it at http://academy.datastax.com - it's free!  Be sure to create a download key (token) for your downloads too.
 
-# The more manual way
+# Let's get started!
+Now that you've set some environment variables, you can choose more of a manual installation or an automated install. Choose below.
+
+# The more manual way - manual install
 If you are a masochist and want to do more of a manual method of provisioning VMs, gathering IP addresses, and running the setup then check out `MANUAL-METHOD.md` for more instructions.
 
-# The easy way
+# The easy way - automated install
 This is how you can get it up and running within a matter of minutes - completely automated!
 
 ## Install the CLIs for the cloud providers and jq
