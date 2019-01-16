@@ -18,6 +18,7 @@ import threading
 import argparse
 import subprocess
 import webbrowser
+import time
 
 # Configurable args
 ap = argparse.ArgumentParser()
@@ -61,10 +62,9 @@ download_token = os.environ.get('academy_token').strip()
 
 #SSH into the OpsCenter/LCM server, install the JDK, install OpsCenter
 bashCommand = 'ssh -o StrictHostKeyChecking=accept-new -i '+ ssh_key+ ' '+ username+'@'+server_ip+' \'sudo apt-get install -y python software-properties-common; \
-sudo apt-add-repository -y ppa:webupd8team/java; \
+sudo apt-add-repository -y ppa:openjdk-r/ppa; \
 sudo apt-get update; \
-echo "oracle-java8-installer shared/accepted-oracle-license-v1-1 select true" | sudo debconf-set-selections; \
-sudo apt-get install -y oracle-java8-installer; \
+sudo apt-get install -y openjdk-8-jdk; \
 echo "deb https://'+repo_user+':'+download_token+'@debian.datastax.com/enterprise \
 stable main" | sudo tee -a /etc/apt/sources.list.d/datastax.sources.list; \
 curl -L https://debian.datastax.com/debian/repo_key | sudo apt-key add - ; \
@@ -74,6 +74,7 @@ sudo apt-get update; sudo apt-get install opscenter; sudo service opscenterd sta
 output = subprocess.check_output(['bash','-c', bashCommand])
 
 base_url = 'http://%s:8888/api/v2/lcm/' % server_ip
+base_api_url = 'http://'+server_ip+':8888/'
 cassandra_default_password = os.environ.get('cassandra_default_password').strip()
 opscenter_session = os.environ.get('opscenter_session', '')
 
@@ -138,32 +139,19 @@ machine_credential_response = do_post("machine_credentials/",
 machine_credential_id = machine_credential_response['id']
 
 # setup the config profile for LCM
-if phased_deploy is True:
-	cluster_profile_response = do_post("config_profiles/",
-	    {"name": cluster_name,
-	     "datastax-version": dse_ver,
-		 'json': {'cassandra-yaml' : {
-		 			  'num_tokens' : 256,
-					 				},
-					'dse-yaml' : {
-						'authentication_options' : {'enabled' : False }
-									},
-	             },
-	     "comment": 'LCM provisioned as %s' % cluster_name})
-else:
-	cluster_profile_response = do_post("config_profiles/",
-	    {"name": cluster_name,
-	     "datastax-version": dse_ver,
-		 'json': {'cassandra-yaml' : {
-		 			  'num_tokens' : 256,
-	                  'client_encryption_options' : { 'enabled' : True },
-	                 'server_encryption_options' : { 'internode_encryption' : 'all',
-								                      'require_client_auth' : True,
-								                      'require_endpoint_verification' : False
-	                 								}
-					 				},
-	             },
-	     "comment": 'LCM provisioned as %s' % cluster_name})
+cluster_profile_response = do_post("config_profiles/",
+    {"name": cluster_name,
+     "datastax-version": dse_ver,
+	 'json': {'cassandra-yaml' : {
+	 			  'num_tokens' : 8,
+                  'client_encryption_options' : { 'enabled' : True },
+                 'server_encryption_options' : { 'internode_encryption' : 'all',
+							                      'require_client_auth' : True,
+							                      'require_endpoint_verification' : False
+                 								}
+				 				},
+             },
+     "comment": 'LCM provisioned as %s' % cluster_name})
 
 cluster_profile_id = cluster_profile_response['id']
 
@@ -179,17 +167,12 @@ cluster_id = make_cluster_response['id']
 
 data_centers = set()
 
-'''
 # open up the server list (provided by -s blah) within LCM and start creating the mapping of DCs and nodes
-with open(server_list, 'r') as server_list_file:
-    server_list = server_list_file.read().split()
-'''
 for host in server_list:
     data_centers.add(host.split(":")[2])
 
 # create the DCs for the recently created cluster
 data_center_ids = {}
-cnt = 0
 for data_center in data_centers:
 	if data_center not in ["Ops", "ops", "OpsCenter", "opscenter", "Opscenter"]:
 		make_dc_response = do_post("datacenters/",
@@ -201,9 +184,6 @@ for data_center in data_centers:
 			 )
 		dc_id = make_dc_response['id']
 		data_center_ids[data_center] = dc_id
-		#get the first datacenter id so we can use it for the phased install
-		if cnt == 0:
-			phase_dc_id = data_center_ids[data_center]
 
 # create the nodes for the recently created DCs
 for host in server_list:
@@ -222,27 +202,17 @@ for host in server_list:
 	         "datacenter-id": data_center_ids[data_center],
 	         "rack": "rack1"})
 
-# If phased install is requested ``-p` then configure all of the DCs but only install DSE on the first DC
-if phased_deploy is True:
-	install_job = do_post("actions/install",
-	                     {"job-type":"install",
-	                      "job-scope":"datacenter",
-	                      "resource-id": phase_dc_id,
-	                      "continue-on-error":"false"})
-	job_id = install_job['id']
-
-	# TBD: wait for the job to be done and then run some scripts to alter the system and OpsC keyspaces, add new username, etc.?
-else:
-	# Request an install job to execute the installation and configuration of the
-	# cluster. Until this point, we've been describing desired state. Now LCM will
-	# execute the changes necessary to achieve that state.
-	install_job = do_post("actions/install",
-	                     {"job-type":"install",
-	                      "job-scope":"cluster",
-	                      "resource-id":cluster_id,
-	                      "continue-on-error":"false"})
-	job_id = install_job['id']
+# Request an install job to execute the installation and configuration of the
+# cluster. Until this point, we've been describing desired state. Now LCM will
+# execute the changes necessary to achieve that state.
+install_job = do_post("actions/install",
+                     {"job-type":"install",
+                      "job-scope":"cluster",
+                      "resource-id":cluster_id,
+					  "concurrency-strategy": "cluster-at-a-time",
+                      "continue-on-error":"false"})
+job_id = install_job['id']
 print("DataStax OpsCenter can be found at: http://%s:8888" % server_ip)
-
+print("The installation of DataStax Enterprise is complete.")
 # open up a new browser tab that shows the deployment job that you just started
 webbrowser.open_new_tab('http://'+server_ip+':8888/opscenter/lcm.html#/jobs/'+job_id)
