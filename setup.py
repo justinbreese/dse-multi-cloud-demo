@@ -32,8 +32,6 @@ ap.add_argument("-s", "--server_list", required=True,
 	help="list of servers to be added to the new cluster")
 ap.add_argument("-u", "--user", required=True,
 	help="username for the server")
-ap.add_argument("-p", "--phased", required=False, action='store_true',
-	help="install the first DC and then setup the config for the other DCs?")
 
 args = vars(ap.parse_args())
 
@@ -41,7 +39,6 @@ ssh_key = args["ssh_key"]
 cluster_name = args["cluster_name"]
 server_list = args["server_list"]
 username = args["user"]
-phased_deploy = args["phased"]
 dse_ver = "6.0.4"
 
 
