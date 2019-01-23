@@ -1,5 +1,3 @@
-#this is a scratch pad of misc code!
-
 #!/usr/bin/env python
 # Example provisioning API usage script.  (C) DataStax, 2018.  All Rights Reserved
 #
