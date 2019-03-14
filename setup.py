@@ -39,7 +39,7 @@ ssh_key = args["ssh_key"]
 cluster_name = args["cluster_name"]
 server_list = args["server_list"]
 username = args["user"]
-dse_ver = "6.0.4"
+dse_ver = "6.7.0"
 
 
 # open up the server list and pull out the predefined OpsCenter VM
