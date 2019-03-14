@@ -33,6 +33,8 @@ This is how you can get it up and running within a matter of minutes - completel
   * Instructions on how to install the CLI for AWS: https://docs.aws.amazon.com/cli/latest/userguide/installing.html
   * Instructions on how to install the CLI for GCP: https://cloud.google.com/sdk/
 * Install jq: `brew install jq` - you will need this for the scripts to successfully parse json.
+* Install pip: `sudo easy_install pip`
+* Install python requests: `sudo pip install requests`
 
 ## Create a key pair that you can use for all VMs
 * Use an existing one or create a new one: `ssh-keygen -C "ubuntu"`
@@ -42,13 +44,12 @@ This is how you can get it up and running within a matter of minutes - completel
 
 ## From your laptop, here is an example command to get everything setup command:
 It is time to setup your cluster using the `deploy.sh` script. Here is an example:
-`/deploy.sh -d jbreese-test -k ../keys/ubuntu -u ubuntu -p`
+`/deploy.sh -d jbreese-test -k ../keys/ubuntu -u ubuntu`
 
 Let's break down the switches:
 * -d --> Argument needed: name of the DSE cluster and cloud deployments that you'd like to create (required) (e.g. jbreese-test)
 * -k --> Argument needed: file of the private key on your laptop (required) (e.g. ../keys/ubuntu)
 * -u --> Argument needed: username that you'll use to log into all of the servers (required) (e.g. ubuntu)
-* -p --> Flag only: phased deployment will configure all DCs but will only install the first DC. You'll still be able to see the other DCs within LCM, though. You just need `-p` for this flag and nothing else. To install the subsequent DCs: go into LCM, click on the cluster -> DC -> click on the ... and then `install`. This will kick off an install job for that DC (optional) (e.g. -p)
 
 The script could take a few minutes to deploy so be patient.
 
